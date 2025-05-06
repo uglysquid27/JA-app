@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-routing-machine'; // Import the leaflet routing machine
 
 export default function BookRide() {
   const [form, setForm] = useState({
@@ -8,118 +9,201 @@ export default function BookRide() {
     pickup: '',
     destination: '',
     destinationCoords: null,
+    pickupCoords: null,
     time: '',
   });
 
-  const [marker, setMarker] = useState(null);
   const [map, setMap] = useState(null);
-  const [typingTimeout, setTypingTimeout] = useState(null);
+  const [marker, setMarker] = useState(null); // destination marker
+  const [pickupMarker, setPickupMarker] = useState(null);
+  const [routeControl, setRouteControl] = useState(null); // to store route control
   const [suggestions, setSuggestions] = useState([]);
+  const [pickupSuggestions, setPickupSuggestions] = useState([]);
+  const [typingTimeout, setTypingTimeout] = useState(null);
+  const [pickupTypingTimeout, setPickupTypingTimeout] = useState(null);
+  const [distance, setDistance] = useState(null);
 
-  // Initialize the Leaflet map
   useEffect(() => {
     if (!map) {
-      const leafletMap = L.map('destination-map', {
-        center: [51.505, -0.09], // Default center (change as necessary)
+      const leafletMap = L.map('map', {
+        center: [51.505, -0.09],
         zoom: 13,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
 
-      // Map click event to select destination by clicking on the map
-      leafletMap.on('click', function (e) {
-        const { lat, lng } = e.latlng;
-        updateMapLocation(lat, lng);
-        fetchPlaceName(lat, lng);  // Fetch place name based on lat/lng
-      });
-
       setMap(leafletMap);
     }
 
     return () => {
-      if (map) {
-        map.remove();  // Clean up map on unmount
-      }
+      if (map) map.remove();
     };
   }, [map]);
 
-  // Handle input change for destination
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation not supported');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const { latitude, longitude } = coords;
+        const locationName = await reverseGeocode(latitude, longitude);
+
+        if (pickupMarker) pickupMarker.remove();
+
+        const marker = L.marker([latitude, longitude]).addTo(map);
+        setPickupMarker(marker);
+
+        setForm((prev) => ({
+          ...prev,
+          pickup: locationName,
+          pickupCoords: { lat: latitude, lon: longitude },
+        }));
+
+        map.setView([latitude, longitude], 13);
+
+        if (form.destinationCoords) {
+          calculateDistance(latitude, longitude, form.destinationCoords.lat, form.destinationCoords.lon);
+          // Recalculate route when destination is set
+          updateRoute([latitude, longitude], [form.destinationCoords.lat, form.destinationCoords.lon]);
+        }
+      },
+      (err) => {
+        console.error(err);
+        alert('Failed to get location');
+      }
+    );
+  };
+
+  const reverseGeocode = async (lat, lon) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data?.display_name || `${lat}, ${lon}`;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
 
-    if (name === 'destination' && value.trim()) {
-      // If there's a previous timeout, clear it
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-
-      // Set a new timeout to search after the user stops typing
-      const timeoutId = setTimeout(() => {
-        searchLocation(value);
-      }, 500);  // 500ms delay
-
-      // Store the timeout ID so we can clear it if needed
+    if (name === 'destination') {
+      if (typingTimeout) clearTimeout(typingTimeout);
+      const timeoutId = setTimeout(() => searchLocation(value, 'destination'), 500);
       setTypingTimeout(timeoutId);
     }
+
+    if (name === 'pickup') {
+      if (pickupTypingTimeout) clearTimeout(pickupTypingTimeout);
+      const timeoutId = setTimeout(() => searchLocation(value, 'pickup'), 500);
+      setPickupTypingTimeout(timeoutId);
+    }
   };
 
-  // Search for a place based on input value (using OpenStreetMap or similar data)
-  const searchLocation = async (query) => {
-    if (!map) return;
-
+  const searchLocation = async (query, field) => {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+    const res = await fetch(url);
+    const data = await res.json();
 
-      if (data.length > 0) {
-        // Update the suggestions list with the search results
-        const places = data.map((place) => ({
-          name: place.display_name,
-          lat: place.lat,
-          lon: place.lon,
-        }));
-        setSuggestions(places);
-      }
-    } catch (error) {
-      console.error('Error fetching location:', error);
-    }
+    const places = data.map((place) => ({
+      name: place.display_name,
+      lat: place.lat,
+      lon: place.lon,
+    }));
+
+    if (field === 'destination') setSuggestions(places);
+    else setPickupSuggestions(places);
   };
 
-  // Handle suggestion click to select destination from dropdown
-  const handleSuggestionClick = (suggestion) => {
-    setForm({
-      ...form,
-      destination: suggestion.name,
-      destinationCoords: { lat: suggestion.lat, lon: suggestion.lon },
-    });
-    setSuggestions([]); // Clear the suggestions dropdown after selection
-    updateMapLocation(suggestion.lat, suggestion.lon); // Update map location
-  };
+  const handleSuggestionClick = (place, field) => {
+    const lat = parseFloat(place.lat);
+    const lon = parseFloat(place.lon);
 
-  // Update map location and marker
-  const updateMapLocation = (lat, lon) => {
-    if (map) {
-      map.setView([lat, lon], 13);  // Center the map to the new coordinates
+    if (field === 'destination') {
+      setForm((prev) => ({
+        ...prev,
+        destination: place.name,
+        destinationCoords: { lat, lon },
+      }));
+      setSuggestions([]);
 
-      // Remove the old marker if exists
-      if (marker) {
-        marker.remove();
-      }
-
-      // Add new marker at the location
+      if (marker) marker.remove();
       const newMarker = L.marker([lat, lon]).addTo(map);
-      setMarker(newMarker); // Store the new marker
+      setMarker(newMarker);
+
+      if (form.pickupCoords) {
+        calculateDistance(form.pickupCoords.lat, form.pickupCoords.lon, lat, lon);
+      }
+
+      // Update route
+      if (pickupMarker) {
+        updateRoute(pickupMarker.getLatLng(), newMarker.getLatLng());
+      }
+
+      // Fit map bounds to both markers
+      if (pickupMarker) {
+        map.fitBounds([pickupMarker.getLatLng(), newMarker.getLatLng()]);
+      }
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        pickup: place.name,
+        pickupCoords: { lat, lon },
+      }));
+      setPickupSuggestions([]);
+
+      if (pickupMarker) pickupMarker.remove();
+      const newMarker = L.marker([lat, lon]).addTo(map);
+      setPickupMarker(newMarker);
+
+      if (form.destinationCoords) {
+        calculateDistance(lat, lon, form.destinationCoords.lat, form.destinationCoords.lon);
+      }
+
+      // Update route
+      if (marker) {
+        updateRoute(newMarker.getLatLng(), marker.getLatLng());
+      }
+
+      // Fit map bounds to both markers
+      if (marker) {
+        map.fitBounds([newMarker.getLatLng(), marker.getLatLng()]);
+      }
     }
+
+    map.setView([lat, lon], 13);
   };
 
-  // Handle form submission
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const from = L.latLng(lat1, lon1);
+    const to = L.latLng(lat2, lon2);
+    const dist = from.distanceTo(to); // in meters
+    setDistance((dist / 1000).toFixed(2)); // in km
+  };
+
+  const updateRoute = (pickupLatLon, destinationLatLon) => {
+    // Remove existing route
+    if (routeControl) {
+      routeControl.remove();
+    }
+  
+    // Create a new route between the markers
+    const route = L.Routing.control({
+      waypoints: [L.latLng(pickupLatLon), L.latLng(destinationLatLon)],
+      createMarker: () => null, // Disable the default markers (no name, just the path)
+      routeWhileDragging: true, // Show the route while dragging
+    }).addTo(map);
+  
+    setRouteControl(route); // Save the route control to update or remove later
+  };
+  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(form);
-    // Submit form logic here
+    alert('Ride booked!');
   };
 
   return (
@@ -133,20 +217,58 @@ export default function BookRide() {
           name="name"
           placeholder="Your name"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={handleChange}
           required
           className="mb-4 w-full border px-4 py-2 rounded"
         />
 
-        {/* Pickup Location (Map Component) */}
-        {/* You can add a similar map component for pickup location */}
-
-        {/* Destination with input and suggestions dropdown */}
+        {/* Pickup */}
         <div className="relative mb-4">
+          <label htmlFor="pickup" className="block font-semibold mb-1">
+            Pickup Location
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              name="pickup"
+              placeholder="Type pickup location"
+              value={form.pickup}
+              onChange={handleChange}
+              autoComplete="off"
+              className="w-full border px-4 py-2 rounded"
+            />
+            <button
+              type="button"
+              onClick={useCurrentLocation}
+              className="bg-gray-200 px-4 rounded hover:bg-gray-300"
+            >
+              Use Current
+            </button>
+          </div>
+          {pickupSuggestions.length > 0 && (
+            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
+              {pickupSuggestions.map((s, i) => (
+                <li
+                  key={i}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleSuggestionClick(s, 'pickup')}
+                >
+                  {s.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Destination */}
+        <div className="relative mb-4">
+          <label htmlFor="destination" className="block font-semibold mb-1">
+            Destination
+          </label>
           <input
             type="text"
             name="destination"
-            placeholder="Destination"
+            placeholder="Type destination"
             value={form.destination}
             onChange={handleChange}
             autoComplete="off"
@@ -154,12 +276,12 @@ export default function BookRide() {
             className="w-full border px-4 py-2 rounded"
           />
           {suggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded">
+            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
               {suggestions.map((s, i) => (
                 <li
                   key={i}
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleSuggestionClick(s)}
+                  onClick={() => handleSuggestionClick(s, 'destination')}
                 >
                   {s.name}
                 </li>
@@ -169,25 +291,40 @@ export default function BookRide() {
         </div>
 
         {/* Time */}
-        <input
-          type="datetime-local"
-          name="time"
-          value={form.time}
-          onChange={(e) => setForm({ ...form, time: e.target.value })}
-          required
-          className="mb-6 w-full border px-4 py-2 rounded"
-        />
+        <div className="mb-6">
+          <label htmlFor="time" className="block font-semibold mb-1">
+            Choose Time
+          </label>
+          <input
+            type="datetime-local"
+            name="time"
+            value={form.time}
+            onChange={handleChange}
+            required
+            className="w-full border px-4 py-2 rounded"
+          />
+        </div>
+
+        {/* Distance */}
+        {distance && (
+          <div className="mb-4 font-semibold">
+            Estimated Distance: {distance} km
+          </div>
+        )}
+
+        {/* Map */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-1">Map</label>
+          <div id="map" className="w-full h-64 rounded border"></div>
+        </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
           Book Ride
         </button>
       </form>
-
-      {/* Destination Map (Leaflet) */}
-      <div className="mt-8 w-full h-96" id="destination-map"></div>
     </div>
   );
 }
