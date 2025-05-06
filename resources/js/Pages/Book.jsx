@@ -24,17 +24,27 @@ export default function BookRide() {
   const [distance, setDistance] = useState(null);
 
   useEffect(() => {
+    const now = new Date();
+    // Convert to UTC+7 (WIB)
+    const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+    const isoString = wibTime.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+  
+    setForm((prev) => ({
+      ...prev,
+      time: isoString, // Set default time to current WIB
+    }));
+  
     if (!map) {
       const leafletMap = L.map('map', {
         center: [51.505, -0.09],
         zoom: 13,
       });
-
+  
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
-
+  
       setMap(leafletMap);
     }
-
+  
     return () => {
       if (map) map.remove();
     };
@@ -198,7 +208,6 @@ export default function BookRide() {
   
     setRouteControl(route); // Save the route control to update or remove later
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
