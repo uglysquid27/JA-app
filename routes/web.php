@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\RequestController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -21,6 +22,8 @@ Route::get('/book', function () {
     return Inertia::render('Book');
 })->name('book');
 
+Route::post('/api/requests', [RequestController::class, 'store']);
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -31,6 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/find-place', [LocationController::class, 'findPlace']);
+// Route::get('/find-place', [LocationController::class, 'findPlace']);
 
 require __DIR__.'/auth.php';

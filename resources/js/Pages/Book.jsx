@@ -209,16 +209,50 @@ export default function BookRide() {
     setRouteControl(route); // Save the route control to update or remove later
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-    alert('Ride booked!');
+  
+    console.log('Form data being submitted:', form); // Log the form data
+  
+    try {
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify(form),
+      });
+  
+      console.log('Response status:', response.status); // Log the response status
+  
+      if (response.ok) {
+        console.log('Ride booked successfully!'); // Log success message
+        alert('Ride booked successfully!');
+        setForm({
+          name: '',
+          pickup: '',
+          destination: '',
+          destinationCoords: null,
+          pickupCoords: null,
+          time: '',
+        });
+      } else {
+        const errorData = await response.json();
+        console.error('Error response data:', errorData); // Log error response data
+        alert(`Failed to book ride: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error); // Log any caught errors
+      alert('An error occurred while booking the ride.');
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Book a Ride</h2>
+    <div className="flex justify-center items-center bg-gray-100 p-4 min-h-screen">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md p-8 rounded-lg w-full max-w-lg">
+        <h2 className="mb-6 font-bold text-2xl text-center">Book a Ride</h2>
 
         {/* Name */}
         <input
@@ -228,12 +262,12 @@ export default function BookRide() {
           value={form.name}
           onChange={handleChange}
           required
-          className="mb-4 w-full border px-4 py-2 rounded"
+          className="mb-4 px-4 py-2 border rounded w-full"
         />
 
         {/* Pickup */}
         <div className="relative mb-4">
-          <label htmlFor="pickup" className="block font-semibold mb-1">
+          <label htmlFor="pickup" className="block mb-1 font-semibold">
             Pickup Location
           </label>
           <div className="flex gap-2">
@@ -244,22 +278,22 @@ export default function BookRide() {
               value={form.pickup}
               onChange={handleChange}
               autoComplete="off"
-              className="w-full border px-4 py-2 rounded"
+              className="px-4 py-2 border rounded w-full"
             />
             <button
               type="button"
               onClick={useCurrentLocation}
-              className="bg-gray-200 px-4 rounded hover:bg-gray-300"
+              className="bg-gray-200 hover:bg-gray-300 px-4 rounded"
             >
               Use Current
             </button>
           </div>
           {pickupSuggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
+            <ul className="z-10 absolute bg-white shadow mt-1 border rounded w-full max-h-60 overflow-y-auto">
               {pickupSuggestions.map((s, i) => (
                 <li
                   key={i}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
                   onClick={() => handleSuggestionClick(s, 'pickup')}
                 >
                   {s.name}
@@ -271,7 +305,7 @@ export default function BookRide() {
 
         {/* Destination */}
         <div className="relative mb-4">
-          <label htmlFor="destination" className="block font-semibold mb-1">
+          <label htmlFor="destination" className="block mb-1 font-semibold">
             Destination
           </label>
           <input
@@ -282,14 +316,14 @@ export default function BookRide() {
             onChange={handleChange}
             autoComplete="off"
             required
-            className="w-full border px-4 py-2 rounded"
+            className="px-4 py-2 border rounded w-full"
           />
           {suggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
+            <ul className="z-10 absolute bg-white shadow mt-1 border rounded w-full max-h-60 overflow-y-auto">
               {suggestions.map((s, i) => (
                 <li
                   key={i}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
                   onClick={() => handleSuggestionClick(s, 'destination')}
                 >
                   {s.name}
@@ -301,7 +335,7 @@ export default function BookRide() {
 
         {/* Time */}
         <div className="mb-6">
-          <label htmlFor="time" className="block font-semibold mb-1">
+          <label htmlFor="time" className="block mb-1 font-semibold">
             Choose Time
           </label>
           <input
@@ -310,7 +344,7 @@ export default function BookRide() {
             value={form.time}
             onChange={handleChange}
             required
-            className="w-full border px-4 py-2 rounded"
+            className="px-4 py-2 border rounded w-full"
           />
         </div>
 
@@ -323,13 +357,13 @@ export default function BookRide() {
 
         {/* Map */}
         <div className="mb-6">
-          <label className="block font-semibold mb-1">Map</label>
-          <div id="map" className="w-full h-64 rounded border"></div>
+          <label className="block mb-1 font-semibold">Map</label>
+          <div id="map" className="border rounded w-full h-64"></div>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 hover:bg-blue-700 py-2 rounded w-full text-white"
         >
           Book Ride
         </button>
