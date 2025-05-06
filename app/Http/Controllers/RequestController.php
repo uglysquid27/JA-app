@@ -7,6 +7,11 @@ use App\Models\Request as RideRequest;
 
 class RequestController extends Controller
 {
+    public function index()
+    {
+        $requests = RideRequest::paginate(5); // Paginate with 5 items per page
+        return response()->json($requests);
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([

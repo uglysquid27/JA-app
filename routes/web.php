@@ -22,6 +22,7 @@ Route::get('/book', function () {
     return Inertia::render('Book');
 })->name('book');
 
+Route::get('/requests', [RequestController::class, 'index']);
 Route::post('/api/requests', [RequestController::class, 'store']);
 
 Route::get('/dashboard', function () {
