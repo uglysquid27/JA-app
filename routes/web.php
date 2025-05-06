@@ -5,7 +5,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
@@ -18,6 +17,10 @@ Route::get('/profile', function () {
     return Inertia::render('Profile');
 });
 
+Route::get('/book', function () {
+    return Inertia::render('Book');
+})->name('book');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -27,5 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/find-place', [LocationController::class, 'findPlace']);
 
 require __DIR__.'/auth.php';
