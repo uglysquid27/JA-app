@@ -42,27 +42,36 @@ export default function Dashboard() {
         fetchRequests(currentPage)
 
         fetch('http://localhost:8000/request/today-count')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Fetched count:', data);
-            setCount(data.count);
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched count:', data);
+                setCount(data.count);
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
 
         axios.get('/history-logs')
-        .then((response) => {
-            setLogs(response.data);
-        })
-        .catch((error) => {
-            console.error('Error fetching logs:', error);
-        });
+            .then((response) => {
+                const logsData = response.data.map((log) => {
+                    const parsedData = JSON.parse(log.data);  
+                    return {
+                        ...log,  
+                        log_message: parsedData.log_message,  
+                    };
+                });
+                setLogs(logsData);  
+            })
+            .catch((error) => {
+                console.error('Error fetching logs:', error);
+            });
+
+
     }, [currentPage])
 
     const data = [
@@ -333,18 +342,15 @@ export default function Dashboard() {
 
                             {/* List of requests */}
                             <div className='space-y-3 mt-4'>
-                                {/* Single request */}
                                 <div className='flex justify-between items-center'>
                                     <div>
-                                        <h4 className='font-medium text-gray-700 text-sm'>
-                                            John Doe
-                                        </h4>
-                                        <p className='text-gray-500 text-xs'>
-                                            Destination: Airport | Time: 10:30
-                                            AM
-                                        </p>
+                                        {Array.isArray(logs) && logs.map((log, index) => (
+                                            <p key={index}>{log.log_message}</p>  // Display log_message
+                                        ))}
                                     </div>
                                 </div>
+
+
 
                                 {/* Single request */}
                                 <div className='flex justify-between items-center'>
