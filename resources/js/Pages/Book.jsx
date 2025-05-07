@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-routing-machine'; // Import the leaflet routing machine
+import 'leaflet-routing-machine';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import DefaultSidebar from '@/Layouts/sidebarLayout'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head } from '@inertiajs/react'
 
 export default function Book() {

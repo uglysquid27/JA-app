@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RequestController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\HistoryLogController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -25,10 +26,12 @@ Route::get('/book', function () {
     return redirect('/');
 })->name('book'); // ✅ Make sure this is present
 
+Route::get('/history-logs', [HistoryLogController::class, 'index']);
 
 
 Route::get('/requests', [RequestController::class, 'index']);
 Route::post('/api/requests', [RequestController::class, 'store']);
+Route::get('/request/today-count', [RequestController::class, 'getTodayRequestCount']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

@@ -1,5 +1,4 @@
 import DefaultSidebar from '@/Layouts/sidebarLayout'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head } from '@inertiajs/react'
 import {
     BarChart,
@@ -13,11 +12,15 @@ import {
     ResponsiveContainer
 } from 'recharts'
 import { useEffect, useState } from 'react'
+import { Inertia } from '@inertiajs/inertia';
+import axios from 'axios';
 
-export default function Dashboard () {
+export default function Dashboard() {
+    const [count, setCount] = useState(0);
     const [rideRequests, setRideRequests] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [lastPage, setLastPage] = useState(1)
+    const [logs, setLogs] = useState([]);
 
     useEffect(() => {
         const fetchRequests = async (page = 1) => {
@@ -37,13 +40,30 @@ export default function Dashboard () {
         }
 
         fetchRequests(currentPage)
-    }, [currentPage])
 
-    const handlePageChange = page => {
-        if (page >= 1 && page <= lastPage) {
-            setCurrentPage(page)
-        }
-    }
+        fetch('http://localhost:8000/request/today-count')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetched count:', data);
+            setCount(data.count);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
+        axios.get('/history-logs')
+        .then((response) => {
+            setLogs(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching logs:', error);
+        });
+    }, [currentPage])
 
     const data = [
         { name: 'Off', uv: 3 },
@@ -63,7 +83,7 @@ export default function Dashboard () {
                                 Total Ride Request Today
                             </div>
                             <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>
-                                5
+                                {count}
                             </div>
                         </div>
                     </div>
