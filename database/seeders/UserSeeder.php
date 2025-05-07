@@ -9,22 +9,30 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Coordinator
+        // General Affair (JA)
         User::create([
-            'username' => 'coordinator1',
-            'email' => 'coordinator1@example.com', // Add email
-            'role' => 'coordinator',
+            'username' => 'ja_person',
+            'email' => 'ja@example.com',
+            'role' => 'general_affair',
             'password' => Hash::make('password'),
         ]);
 
-        // Driver
+        // Drivers
+        for ($i = 1; $i <= 5; $i++) {
+            User::create([
+                'username' => 'driver' . $i,
+                'email' => 'driver' . $i . '@example.com',
+                'role' => 'driver',
+                'password' => Hash::make('password'),
+            ]);
+        }
+
+        // Admin
         User::create([
-            'username' => 'driver1',
-            'email' => 'driver1@example.com', // Add email
-            'role' => 'driver',
+            'username' => 'admin1',
+            'email' => 'admin1@example.com',
+            'role' => 'admin',
             'password' => Hash::make('password'),
         ]);
     }
-    
-        // Add more users as needed
-    }   
+}

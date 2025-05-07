@@ -147,7 +147,7 @@ export default function Dashboard () {
                                 {/* Container for the content */}
                                 <div className='relative px-4 pt-3 pb-4'>
                                     <h3 className='font-semibold text-gray-700 text-sm'>
-                                        Available Driver
+                                        Request
                                     </h3>
 
                                     {/* List of requests */}
@@ -175,9 +175,6 @@ export default function Dashboard () {
                                                     <button className='bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm'>
                                                         Assign
                                                     </button>
-                                                    <button className='hover:bg-gray-100 px-3 py-1 border border-gray-300 rounded text-gray-700 text-sm'>
-                                                        Edit
-                                                    </button>
                                                 </div>
                                             </div>
                                         ))}
@@ -191,7 +188,7 @@ export default function Dashboard () {
                                 {/* Container for the content */}
                                 <div className='relative px-4 pt-3 pb-4'>
                                     <h3 className='font-semibold text-gray-700 text-sm'>
-                                        Available Driver
+                                        Driver
                                     </h3>
 
                                     {/* List of requests */}

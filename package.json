@@ -25,6 +25,7 @@
         "@heroicons/react": "^2.2.0",
         "@inertiajs/inertia-react": "^0.8.1",
         "@material-tailwind/react": "^2.1.10",
+        "flatpickr": "^4.6.13",
         "leaflet": "^1.9.4",
         "leaflet-control-geocoder": "^3.1.0",
         "leaflet-routing-machine": "^3.2.12",
