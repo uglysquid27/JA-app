@@ -28,12 +28,12 @@ export default function Book() {
   const [pickupTypingTimeout, setPickupTypingTimeout] = useState(null);
   const [distance, setDistance] = useState(null);
   const flatpickrInstance = useRef(null);
-  
+
   useEffect(() => {
     const now = new Date();
     const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
     const isoString = wibTime.toISOString().slice(0, 16);
-  
+
     setForm(prev => ({ ...prev, time: isoString }));
 
     // Inisialisasi flatpickr
@@ -213,28 +213,28 @@ export default function Book() {
     if (routeControl) {
       routeControl.remove();
     }
-  
+
     // Create a new route between the markers
     const route = L.Routing.control({
       waypoints: [L.latLng(pickupLatLon), L.latLng(destinationLatLon)],
       createMarker: () => null, // Disable the default markers (no name, just the path)
       routeWhileDragging: true, // Show the route while dragging
     }).addTo(map);
-  
+
     setRouteControl(route); // Save the route control to update or remove later
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Format the time in the correct format for MySQL
     const formattedTime = new Date(form.time).toISOString().slice(0, 19).replace('T', ' ');
-  
+
     const data = {
       ...form,
       time: formattedTime, // Use the formatted time here
     };
-  
+
     try {
       const response = await fetch('/api/requests', {
         method: 'POST',
@@ -245,7 +245,7 @@ export default function Book() {
         },
         body: JSON.stringify(data),
       });
-  
+
       if (response.ok) {
         alert('Ride booked successfully!');
         setForm({
@@ -264,132 +264,132 @@ export default function Book() {
       alert('An error occurred while booking the ride.');
     }
   };
-  
-  
+
+
   return (
-    <DefaultSidebar
-    header={
-      <h2 className='font-semibold text-gray-800 text-xl leading-tight'>
-          Dashboard
-      </h2>
-  }
->
-  <Head title='Dashboard' />
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Book a Ride</h2>
+    <DefaultSidebar>
+      <Head title='Book a Ride' />
+      <div className="h-screen w-full bg-gray-100 overflow-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="min-h-screen flex flex-col justify-center bg-white p-8 rounded-none shadow-none max-w-none w-full"
+        >
+          <h2 className="text-3xl font-bold text-center mb-6">Book a Ride</h2>
 
-        {/* Name */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Your name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="mb-4 w-full border px-4 py-2 rounded"
-        />
+          {/* Name */}
+          <input
+            type="text"
+            name="name"
+            placeholder="Your name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="mb-4 w-full border px-4 py-2 rounded"
+          />
 
-        {/* Pickup */}
-        <div className="relative mb-4">
-          <label htmlFor="pickup" className="block font-semibold mb-1">
-            Pickup Location
-          </label>
-          <div className="flex gap-2">
+          {/* Pickup */}
+          <div className="relative mb-4">
+            <label htmlFor="pickup" className="block font-semibold mb-1">
+              Pickup Location
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                name="pickup"
+                placeholder="Type pickup location"
+                value={form.pickup}
+                onChange={handleChange}
+                autoComplete="off"
+                className="w-full border px-4 py-2 rounded"
+              />
+              <button
+                type="button"
+                onClick={useCurrentLocation}
+                className="bg-gray-200 px-4 rounded hover:bg-gray-300"
+              >
+                Use Current
+              </button>
+            </div>
+            {pickupSuggestions.length > 0 && (
+              <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
+                {pickupSuggestions.map((s, i) => (
+                  <li
+                    key={i}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleSuggestionClick(s, 'pickup')}
+                  >
+                    {s.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Destination */}
+          <div className="relative mb-4">
+            <label htmlFor="destination" className="block font-semibold mb-1">
+              Destination
+            </label>
             <input
               type="text"
-              name="pickup"
-              placeholder="Type pickup location"
-              value={form.pickup}
+              name="destination"
+              placeholder="Type destination"
+              value={form.destination}
               onChange={handleChange}
               autoComplete="off"
+              required
               className="w-full border px-4 py-2 rounded"
             />
+            {suggestions.length > 0 && (
+              <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
+                {suggestions.map((s, i) => (
+                  <li
+                    key={i}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleSuggestionClick(s, 'destination')}
+                  >
+                    {s.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* DateTime Picker */}
+          <div className="mb-4">
+            <label htmlFor="datetime" className="block mb-1 font-semibold">Date & Time</label>
+            <input
+              id="datetime-picker"
+              type="text"
+              placeholder="Select Date & Time"
+              className="px-4 py-2 border rounded w-full"
+            />
+          </div>
+
+          {/* Distance */}
+          {distance && (
+            <div className="mb-4 font-semibold">
+              Estimated Distance: {distance} km
+            </div>
+          )}
+
+          {/* Map */}
+          <div className="mb-6">
+            <label className="block font-semibold mb-1">Map</label>
+            <div id="map" className="w-full h-64 rounded border"></div>
+          </div>
+
+          <div className="flex justify-center">
             <button
-              type="button"
-              onClick={useCurrentLocation}
-              className="bg-gray-200 px-4 rounded hover:bg-gray-300"
+              type="submit"
+              className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
             >
-              Use Current
+              Book Ride
             </button>
           </div>
-          {pickupSuggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
-              {pickupSuggestions.map((s, i) => (
-                <li
-                  key={i}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleSuggestionClick(s, 'pickup')}
-                >
-                  {s.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        </form>
+      </div>
 
-        {/* Destination */}
-        <div className="relative mb-4">
-          <label htmlFor="destination" className="block font-semibold mb-1">
-            Destination
-          </label>
-          <input
-            type="text"
-            name="destination"
-            placeholder="Type destination"
-            value={form.destination}
-            onChange={handleChange}
-            autoComplete="off"
-            required
-            className="w-full border px-4 py-2 rounded"
-          />
-          {suggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
-              {suggestions.map((s, i) => (
-                <li
-                  key={i}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleSuggestionClick(s, 'destination')}
-                >
-                  {s.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* DateTime Picker */}
-        <div className="mb-4">
-          <label htmlFor="datetime" className="block mb-1 font-semibold">Date & Time</label>
-          <input
-            id="datetime-picker"
-            type="text"
-            placeholder="Select Date & Time"
-            className="px-4 py-2 border rounded w-full"
-          />
-        </div>
-
-        {/* Distance */}
-        {distance && (
-          <div className="mb-4 font-semibold">
-            Estimated Distance: {distance} km
-          </div>
-        )}
-
-        {/* Map */}
-        <div className="mb-6">
-          <label className="block font-semibold mb-1">Map</label>
-          <div id="map" className="w-full h-64 rounded border"></div>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Book Ride
-        </button>
-      </form>
-    </div>
     </DefaultSidebar>
   );
 }

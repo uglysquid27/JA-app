@@ -46,19 +46,13 @@ export default function Dashboard () {
     }
 
     const data = [
-        { name: 'Free', uv: 3 },
-        { name: 'On Way', uv: 2 },
-        { name: 'Done', uv: 4 }
+        { name: 'Off', uv: 3 },
+        { name: 'On Duty', uv: 2 },
+        { name: 'Available', uv: 4 }
     ]
 
     return (
-        <DefaultSidebar
-            header={
-                <h2 className='font-semibold text-gray-800 text-xl leading-tight'>
-                    Dashboard
-                </h2>
-            }
-        >
+        <DefaultSidebar>
             <Head title='Dashboard' />
 
             <div id='sumCard' className='py-2'>
