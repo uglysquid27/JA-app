@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine'; // Import the leaflet routing machine
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
+import DefaultSidebar from '@/Layouts/sidebarLayout'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import { Head } from '@inertiajs/react'
 
-export default function BookRide() {
+export default function Book() {
   const [form, setForm] = useState({
     name: '',
     pickup: '',
@@ -24,43 +27,41 @@ export default function BookRide() {
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [pickupTypingTimeout, setPickupTypingTimeout] = useState(null);
   const [distance, setDistance] = useState(null);
-
+  const flatpickrInstance = useRef(null);
+  
   useEffect(() => {
     const now = new Date();
-    // Convert to UTC+7 (WIB)
     const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
-    const isoString = wibTime.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+    const isoString = wibTime.toISOString().slice(0, 16);
   
-    setForm((prev) => ({
-      ...prev,
-      time: isoString, // Set default time to current WIB
-    }));
+    setForm(prev => ({ ...prev, time: isoString }));
 
-    // Initialize Flatpickr for both date and time in one field
-    flatpickr('#datetime-picker', {
+    // Inisialisasi flatpickr
+    flatpickrInstance.current = flatpickr('#datetime-picker', {
       enableTime: true,
-      dateFormat: 'Y-m-d H:i', // Format for both date and time
-      defaultDate: new Date(),  // Set default value to current date and time
-      onChange: (selectedDates) => {
+      dateFormat: 'Y-m-d H:i',
+      defaultDate: new Date(),
+      onChange: selectedDates => {
         const selectedDate = selectedDates[0];
-        setForm((prev) => ({ ...prev, time: selectedDate.toISOString() }));
-      },
+        setForm(prev => ({ ...prev, time: selectedDate.toISOString() }));
+      }
     });
-  
+
+    // Inisialisasi Leaflet
     if (!map) {
       const leafletMap = L.map('map', {
         center: [51.505, -0.09],
         zoom: 13,
       });
-  
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
-  
       setMap(leafletMap);
     }
-  
+
+    // Cleanup
     return () => {
       if (map) map.remove();
-      flatpickr('#datetime-picker').destroy();
+      if (flatpickrInstance.current) flatpickrInstance.current.destroy();
     };
   }, [map]);
 
@@ -266,6 +267,14 @@ export default function BookRide() {
   
   
   return (
+    <DefaultSidebar
+    header={
+      <h2 className='font-semibold text-gray-800 text-xl leading-tight'>
+          Dashboard
+      </h2>
+  }
+>
+  <Head title='Dashboard' />
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Book a Ride</h2>
@@ -381,5 +390,6 @@ export default function BookRide() {
         </button>
       </form>
     </div>
+    </DefaultSidebar>
   );
 }

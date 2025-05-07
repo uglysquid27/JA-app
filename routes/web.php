@@ -5,22 +5,27 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RequestController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-});
-
-Route::get('/profile', function () {
-    return Inertia::render('Profile');
-});
+    if (auth()->check() && auth()->user()->role == 'general_affair') {
+        return Inertia::render('Dashboard');
+    }
+    return redirect(to:'/');
+})->name(name: 'Dashboard');
 
 Route::get('/book', function () {
-    return Inertia::render('Book');
-})->name('book');
+    if (auth()->check() && auth()->user()->role == 'general_affair') {
+        return Inertia::render('Book');
+    }
+    return redirect('/');
+})->name('book'); // ✅ Make sure this is present
+
+
 
 Route::get('/requests', [RequestController::class, 'index']);
 Route::post('/api/requests', [RequestController::class, 'store']);

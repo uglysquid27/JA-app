@@ -18,6 +18,7 @@ import {
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import ApplicationLogo from '@/Components/ApplicationLogo';
+import { Link } from '@inertiajs/react';
 
 export default function DefaultSidebar({ header, children }) {
     return (
@@ -29,18 +30,22 @@ export default function DefaultSidebar({ header, children }) {
                         <ApplicationLogo className="h-8 w-8 fill-current text-blue-500" />
                     </div>
                     <List className="space-y-6">
+                        <Link href={route('dashboard')}>
                         <ListItem className="rounded-lg hover:bg-blue-gray-50">
                             <ListItemPrefix>
                                 <PresentationChartBarIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             <p className="px-4">Dashboard</p>
                         </ListItem>
+                        </Link>
+                        <Link href={route('book')}>
                         <ListItem className="rounded-lg hover:bg-blue-gray-50">
                             <ListItemPrefix>
                                 <InboxIcon className="h-5 w-5" />
                             </ListItemPrefix>
-                            <p className="px-4">Assign</p>
+                            <p className="px-4">Book a ride</p>
                         </ListItem>
+                        </Link>
                         <ListItem className="rounded-lg hover:bg-blue-gray-50">
                             <ListItemPrefix>
                                 <UserCircleIcon className="h-5 w-5" />
