@@ -9,7 +9,7 @@ class Driver extends Model
 {
     use HasFactory;
 
-    protected $table = 'driver';
+    protected $table = 'driver'; // if not renamed to 'drivers'
 
     protected $fillable = [
         'user_id',
@@ -24,5 +24,13 @@ class Driver extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get all requests assigned to the driver.
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
     }
 }

@@ -9,5 +9,21 @@ class Request extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'pickup', 'destination', 'time', 'status'];
+    protected $fillable = [
+        'name',
+        'pickup',
+        'destination',
+        'time',
+        'status',
+        'driver_id',
+        'assigned_at',
+    ];
+
+    /**
+     * Get the driver assigned to the request.
+     */
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
 }

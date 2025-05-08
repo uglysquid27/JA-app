@@ -7,6 +7,7 @@ use App\Models\Request as RideRequest;
 use App\Models\Driver;
 use App\Models\HistoryLog;
 use Carbon\Carbon;
+use Inertia\Inertia;
 
 class RequestController extends Controller
 {
@@ -62,4 +63,39 @@ class RequestController extends Controller
 
         return response()->json(['message' => 'Request saved successfully'], 201);
     }
+    public function assignForm($id)
+{
+    $request = RideRequest::findOrFail($id);
+    $drivers = Driver::all(); // Or use ->where('status', 'available') if needed
+
+    return Inertia::render('AssignDriver', [
+        'request' => $request,
+        'drivers' => $drivers,
+    ]);
+}
+
+public function assignDriver(Request $request)
+{
+    $request->validate([
+        'request_id' => 'required|exists:requests,id',
+        'driver_id' => 'required|exists:driver,id',
+    ]);
+
+    // Find the ride request and update it
+    $requestModel = RideRequest::findOrFail($request->request_id);
+    $requestModel->driver_id = $request->driver_id;
+    $requestModel->assigned_at = Carbon::now();
+    $requestModel->status = 'assigned';
+    $requestModel->save();
+
+    // Find the driver and change their status to 'on duty'
+    $driver = Driver::findOrFail($request->driver_id);
+    $driver->status = 'On Duty';  // Change driver's status
+    $driver->save();
+
+    return redirect()->back()->with('success', 'Driver assigned successfully and status updated.');
+}
+
+
+    
 }

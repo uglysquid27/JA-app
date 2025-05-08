@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('pickup'); // Add this column
+            $table->string('pickup');
             $table->string('destination');
             $table->timestamp('time');
-            $table->string('status')->default('pending'); // Default status
+            $table->foreignId('driver_id')->nullable()->nullOnDelete(); // foreign key to drivers table
+            $table->timestamp('assigned_at')->nullable(); // assignment time
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

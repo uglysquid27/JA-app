@@ -202,7 +202,11 @@ export default function Dashboard() {
                                                     <p className='text-gray-500 text-xs'>Destination: {request.destination} | Time: {new Date(request.time).toLocaleString()}</p>
                                                 </div>
                                                 <div className='flex gap-2'>
-                                                    <button className='bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm'>Assign</button>
+                                                    <button
+                                                        onClick={() => Inertia.visit(`/assign/${request.id}`)}
+                                                        className='bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm'>
+                                                        Assign
+                                                    </button>
                                                 </div>
                                             </div>
                                         ))}

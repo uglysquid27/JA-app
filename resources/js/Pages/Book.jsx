@@ -276,10 +276,13 @@ export default function Book() {
           <h2 className="text-3xl font-bold text-center mb-6">Book a Ride</h2>
 
           {/* Name */}
+          <label htmlFor="pickup" className="block font-semibold mb-1">
+              Requester
+            </label>
           <input
             type="text"
             name="name"
-            placeholder="Your name"
+            placeholder="Requester name"
             value={form.name}
             onChange={handleChange}
             required

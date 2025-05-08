@@ -24,9 +24,11 @@ Route::get('/book', function () {
         return Inertia::render('Book');
     }
     return redirect('/');
-})->name('book'); // ✅ Make sure this is present
+})->name('book'); 
 
 Route::get('/history-logs', [HistoryLogController::class, 'index']);
+Route::get('/assign/{id}', [RequestController::class, 'assignForm'])->name('assign.form');
+Route::post('/assign-driver', [RequestController::class, 'assignDriver'])->name('assign.driver');
 
 
 Route::get('/drivers', [RequestController::class, 'driver']);
