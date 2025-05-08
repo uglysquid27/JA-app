@@ -24,9 +24,7 @@
     </head>
     <body lass="bg-[#f0f0f0] min-h-screen flex flex-col">
     {{-- Only show navbar if user is not logged in --}}
-    @guest
-        @include('layouts.navbar')
-    @endguest
+
         @inertia
     </body>
 </html>

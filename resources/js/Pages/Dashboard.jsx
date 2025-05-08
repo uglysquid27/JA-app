@@ -22,6 +22,11 @@ export default function Dashboard() {
     const [lastPage, setLastPage] = useState(1)
     const [logs, setLogs] = useState([]);
     const [drivers, setDrivers] = useState([]);
+    const [statusCounts, setStatusCounts] = useState({
+        available: 0,
+        'On Duty': 0,
+        'Off Day': 0,
+    });
 
     useEffect(() => {
         const fetchRequests = async (page = 1) => {
@@ -82,8 +87,25 @@ export default function Dashboard() {
             });
 
         axios.get('/drivers')
-            .then((res) => setDrivers(res.data))
-            .catch((err) => console.error('Error fetching drivers:', err));
+            .then((res) => {
+                const driverList = res.data;
+                setDrivers(driverList);
+
+                // Count each status
+                const counts = driverList.reduce((acc, driver) => {
+                    const status = driver.status;
+                    acc[status] = (acc[status] || 0) + 1;
+                    return acc;
+                }, {
+                    available: 0,
+                    'On Duty': 0,
+                    'Off Day': 0,
+                });
+
+                setStatusCounts(counts);
+                console.log(counts)
+            })
+            .catch((err) => console.error('Error fetching drivers:', err)); ((err) => console.error('Error fetching drivers:', err));
 
 
     }, [currentPage])
@@ -93,13 +115,13 @@ export default function Dashboard() {
         acc[status] = (acc[status] || 0) + 1;
         return acc;
     }, {});
-    
+
     const chartData = [
         { name: 'Available', uv: driverStatusCounts['available'] || 0 },
         { name: 'On Duty', uv: driverStatusCounts['On Duty'] || 0 },
         { name: 'Off Day', uv: driverStatusCounts['Off Day'] || 0 },
     ];
-    
+
     return (
         <DefaultSidebar>
             <Head title='Dashboard' />
@@ -119,18 +141,25 @@ export default function Dashboard() {
                             <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>5</div>
                         </div>
                     </div>
+
                     <div className='bg-white shadow-sm sm:rounded-lg overflow-hidden'>
                         <div className='p-6 text-gray-900'>
                             <div className='text-left'>Active Driver</div>
-                            <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>5</div>
+                            <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>
+                                {statusCounts['On Duty']}
+                            </div>
                         </div>
                     </div>
+
                     <div className='bg-white shadow-sm sm:rounded-lg overflow-hidden'>
                         <div className='p-6 text-gray-900'>
                             <div className='text-left'>Available Driver</div>
-                            <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>5</div>
+                            <div className='flex justify-center items-center mt-2 w-10 h-10 text-gray-900'>
+                                {statusCounts['available']}
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 

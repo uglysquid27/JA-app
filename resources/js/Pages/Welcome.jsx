@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from '@inertiajs/inertia-react';
-import DefaultNavbar from '@/Layouts/navbar';
+import Navbar from '@/Layouts/navbar';
 
 export default function Home() {
     return (
         <div>
             {/* Hero Section */}
-            <DefaultNavbar />
+            <Navbar />
             <section id="hero" className="hero bg-white min-h-screen flex items-center justify-center pt-20">
                 <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
                     {/* Text Section */}
@@ -142,7 +142,6 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-            <DefaultNavbar />
 
             {/* Inline style classes */}
             <style>
