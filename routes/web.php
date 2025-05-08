@@ -29,6 +29,7 @@ Route::get('/book', function () {
 Route::get('/history-logs', [HistoryLogController::class, 'index']);
 
 
+Route::get('/drivers', [RequestController::class, 'driver']);
 Route::get('/requests', [RequestController::class, 'index']);
 Route::post('/api/requests', [RequestController::class, 'store']);
 Route::get('/request/today-count', [RequestController::class, 'getTodayRequestCount']);
