@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\DriverController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\HistoryLogController;
 
@@ -39,6 +40,15 @@ Route::get('/request/today-count', [RequestController::class, 'getTodayRequestCo
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/driver/dashboard', [DriverController::class, 'dashboard'])->name('driver.dashboard');
+    Route::post('/driver/status', [DriverController::class, 'updateStatus'])->name('driver.status');
+
+    Route::post('/driver/accept-request', [DriverController::class, 'acceptRequest'])->name('driver.acceptRequest');
+});
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
