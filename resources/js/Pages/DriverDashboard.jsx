@@ -94,7 +94,7 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                         <p><strong>Time:</strong> {new Date(assignedRequest.time).toLocaleString()}</p>
 
                         {/* Pending - show Accept button */}
-                        {assignedRequest.status === 'pending' && (
+                        {assignedRequest.status === 'assigned' && (
                             <button
                                 onClick={handleAcceptRequest}
                                 disabled={processing}
@@ -104,6 +104,7 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                             </button>
                         )}
 
+                        {/* Accepted - show status, accepted time, timer, and done button */}
                         {/* Accepted - show status, accepted time, timer, and done button */}
                         {assignedRequest.status === 'accepted' && (
                             <div className="mt-4 border-t pt-3 space-y-2 text-sm text-gray-800">
@@ -115,10 +116,22 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                                     disabled={processing}
                                     className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
                                 >
-                                    {processing ? 'Marking...' : 'Mark as Done'}
+                                    {processing ? 'Marking...' : 'Mark as Arrived'}
                                 </button>
                             </div>
                         )}
+
+                        {/* Done - show arrived time */}
+                        {assignedRequest.status === 'done' && (
+                            <div className="mt-4 border-t pt-3 space-y-2 text-sm text-gray-800">
+                                <p className="text-purple-700 font-semibold">Status: Arrived</p>
+                                <p><strong>Accepted At:</strong> {new Date(assignedRequest.accepted_at).toLocaleString()}</p>
+                                <p><strong>Arrived At:</strong> {new Date(assignedRequest.arrived_at).toLocaleString()}</p>
+                                <RunningTime startTime={assignedRequest.accepted_at} />
+                            </div>
+                        )}
+
+
                     </div>
                 )}
             </div>

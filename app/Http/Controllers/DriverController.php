@@ -46,22 +46,41 @@ public function updateStatus(Request $request)
     return back()->with('success', 'Status updated successfully.');
 }
     
-    public function acceptRequest(Request $request)
-    {
-        $driver = Driver::where('user_id', Auth::id())->first();
+public function acceptRequest(Request $request)
+{
+    $driver = Driver::where('user_id', Auth::id())->first();
 
-        $rideRequest = RideRequest::where('driver_id', $driver->id)
-                                  ->where('status', 'assigned')
-                                  ->first();
+    $rideRequest = RideRequest::where('driver_id', $driver->id)
+                              ->where('status', 'assigned')
+                              ->first();
 
-        if ($rideRequest) {
-            $rideRequest->status = 'accepted';
-            $rideRequest->save();
+    if ($rideRequest) {
+        $rideRequest->status = 'accepted';
+        $rideRequest->accepted_at = now(); // Set accepted_at timestamp
+        $rideRequest->save();
 
-            $driver->status = 'on duty';
-            $driver->save();
-        }
-
-        return back()->with('message', 'Request accepted.');
+        $driver->status = 'on duty';
+        $driver->save();
     }
+
+    return back()->with('message', 'Request accepted.');
+}
+
+public function completeRequest()
+{
+    $user = auth()->user();
+    $driver = Driver::where('user_id', $user->id)->first();
+
+    $request = RideRequest::where('driver_id', $driver->id)
+                          ->where('status', 'accepted')
+                          ->firstOrFail();
+
+    $request->status = 'done';
+    $request->arrived_at = now();
+    $request->save();
+
+    return back();
+}
+
+
 }

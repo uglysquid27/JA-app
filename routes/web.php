@@ -9,6 +9,11 @@ use App\Http\Controllers\DriverController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\HistoryLogController;
 
+
+Route::get('/test', function () {
+    return Inertia::render('Test');
+});
+
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
@@ -45,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/driver/dashboard', [DriverController::class, 'dashboard'])->name('driver.dashboard');
     Route::post('/driver/status', [DriverController::class, 'updateStatus'])->name('driver.status');
     Route::post('/driver/accept-request', [DriverController::class, 'acceptRequest'])->name('driver.acceptRequest');
+    Route::post('/driver/complete-request', [DriverController::class, 'completeRequest'])->name('driver.complete');
+
 });
 
 

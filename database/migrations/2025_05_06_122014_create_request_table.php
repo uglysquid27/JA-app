@@ -17,11 +17,19 @@ return new class extends Migration
             $table->string('pickup');
             $table->string('destination');
             $table->timestamp('time');
-            $table->foreignId('driver_id')->nullable()->nullOnDelete(); // foreign key to drivers table
-            $table->timestamp('assigned_at')->nullable(); // assignment time
+        
+            $table->foreignId('driver_id')->nullable()->nullOnDelete(); // FK to drivers table
+            $table->timestamp('assigned_at')->nullable(); // when assigned
+            $table->timestamp('accepted_at')->nullable();    // After driver accepts
+            $table->timestamp('picked_up_at')->nullable();   // Optional: if you want a separate "picked up" stage
+            $table->timestamp('arrived_at')->nullable();     // After ride is completed
+            $table->timestamp('done_at')->nullable();        // Optional: for when marked as done (synonymous with arrived_at if only one used)
+
+        
             $table->string('status')->default('pending');
             $table->timestamps();
         });
+        
     }
 
     /**
