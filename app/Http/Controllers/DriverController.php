@@ -13,24 +13,17 @@ class DriverController extends Controller
 {
     public function dashboard()
     {
-        $user = auth()->user();
-    
-        if (!in_array($user->role, ['driver', 'admin'])) {
-            abort(403, 'Unauthorized');
-        }
-    
-        $driver = Driver::where('user_id', $user->id)->first();
+        $driver = Driver::where('user_id', Auth::id())->first();
     
         $assignedRequest = RideRequest::where('driver_id', $driver->id)
-                                      ->whereIn('status', ['assigned', 'accepted'])
+                                      ->whereIn('status', ['assigned', 'accepted']) // <== THIS IS GOOD
                                       ->first();
     
         return Inertia::render('DriverDashboard', [
             'driver' => $driver,
-            'assignedRequest' => $assignedRequest
+            'assignedRequest' => $assignedRequest,
         ]);
-    } 
-    
+    }
 
 public function updateStatus(Request $request)
 {
@@ -66,20 +59,22 @@ public function acceptRequest(Request $request)
     return back()->with('message', 'Request accepted.');
 }
 
-public function completeRequest()
+public function completeRequest(Request $request)
 {
     $user = auth()->user();
-    $driver = Driver::where('user_id', $user->id)->first();
+    $assignedRequest = RideRequest::where('driver_id', $user->id)
+        ->where('status', 'accepted')
+        ->first();
 
-    $request = RideRequest::where('driver_id', $driver->id)
-                          ->where('status', 'accepted')
-                          ->firstOrFail();
+    if ($assignedRequest) {
+        $assignedRequest->status = 'done';
+        $assignedRequest->arrived_at = now();
+        $assignedRequest->save();
 
-    $request->status = 'done';
-    $request->arrived_at = now();
-    $request->save();
+        return redirect()->back()->with('success', 'Ride marked as done.');
+    }
 
-    return back();
+    return redirect()->back()->withErrors(['request' => 'No accepted request found.']);
 }
 
 

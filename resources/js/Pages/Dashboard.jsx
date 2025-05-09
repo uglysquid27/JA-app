@@ -98,8 +98,8 @@ export default function Dashboard() {
                     return acc;
                 }, {
                     available: 0,
-                    'On Duty': 0,
-                    'Off Day': 0,
+                    'on duty': 0,
+                    'off day': 0,
                 });
 
                 setStatusCounts(counts);
@@ -118,8 +118,8 @@ export default function Dashboard() {
 
     const chartData = [
         { name: 'Available', uv: driverStatusCounts['available'] || 0 },
-        { name: 'On Duty', uv: driverStatusCounts['On Duty'] || 0 },
-        { name: 'Off Day', uv: driverStatusCounts['Off Day'] || 0 },
+        { name: 'On Duty', uv: driverStatusCounts['on duty'] || 0 },
+        { name: 'Off Day', uv: driverStatusCounts['off duty'] || 0 },
     ];
 
     return (
