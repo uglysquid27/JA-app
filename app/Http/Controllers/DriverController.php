@@ -14,21 +14,23 @@ class DriverController extends Controller
     public function dashboard()
     {
         $user = auth()->user();
-
+    
         if (!in_array($user->role, ['driver', 'admin'])) {
             abort(403, 'Unauthorized');
         }
+    
         $driver = Driver::where('user_id', $user->id)->first();
-
+    
         $assignedRequest = RideRequest::where('driver_id', $driver->id)
-                                      ->where('status', 'assigned')
+                                      ->whereIn('status', ['assigned', 'accepted'])
                                       ->first();
-
+    
         return Inertia::render('DriverDashboard', [
             'driver' => $driver,
             'assignedRequest' => $assignedRequest
         ]);
     }
+    
 
 public function updateStatus(Request $request)
 {

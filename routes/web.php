@@ -44,7 +44,6 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/driver/dashboard', [DriverController::class, 'dashboard'])->name('driver.dashboard');
     Route::post('/driver/status', [DriverController::class, 'updateStatus'])->name('driver.status');
-
     Route::post('/driver/accept-request', [DriverController::class, 'acceptRequest'])->name('driver.acceptRequest');
 });
 
