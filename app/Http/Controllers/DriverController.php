@@ -29,7 +29,7 @@ class DriverController extends Controller
             'driver' => $driver,
             'assignedRequest' => $assignedRequest
         ]);
-    }
+    } 
     
 
 public function updateStatus(Request $request)
