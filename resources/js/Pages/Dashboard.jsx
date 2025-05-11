@@ -26,7 +26,7 @@ export default function Dashboard() {
         available: 0,
         'On Duty': 0,
         'Off Day': 0,
-    });
+    }); 
 
     useEffect(() => {
         const fetchRequests = async (page = 1) => {
