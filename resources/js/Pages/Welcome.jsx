@@ -15,10 +15,10 @@ export default function Home() {
                 Koordinasi
                 <span className="relative inline-block highlight-blue-sky ml-2">Transportasi.</span>
             </h1>
-            <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
+            {/* <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
                 Korporat
                 <span className="relative inline-block highlight-blue ml-2">Efisien.</span>
-            </h1>
+            </h1> */}
             <p className="text-xl text-gray-700 mb-4 italic">
                 Atur Perjalanan Kantor dengan Mudah dan Cepat.
             </p>
@@ -28,7 +28,7 @@ export default function Home() {
             <div className="flex justify-center lg:justify-start space-x-4">
                 <div className="relative group">
                     <Link
-                        href={route('book')}
+                        href={route('login')}
                         className="bg-[#85C4F9] text-black font-bold py-4 px-8 border-2 border-black relative z-10 inline-block text-center"
                     >
                         Pesan Perjalanan

@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
         // General Affair (JA)
         User::create([
             'username' => 'ja_person',
-            'email' => 'ja@example.com',
+            'email' => 'ga@example.com',
             'role' => 'general_affair',
             'password' => Hash::make('password'),
         ]);

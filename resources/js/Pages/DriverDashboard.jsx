@@ -71,19 +71,18 @@ export default function DriverDashboard({ driver, assignedRequest }) {
 
                 {/* Toggle Status Button */}
                 <div className="flex gap-2 mb-4">
-    <button
-        onClick={toggleStatus}
-        disabled={loading}
-        className={`p-3 rounded-full transition duration-300 ${
-            driver.status === 'available'
-                ? 'bg-red-500 hover:bg-red-600 text-white'
-                : 'bg-green-500 hover:bg-green-600 text-white'
-        } ${loading && 'opacity-50 cursor-not-allowed'}`}
-        title={driver.status === 'available' ? 'Set Off Duty' : 'Set On Duty'}
-    >
-        <PowerIcon className="h-6 w-6" />
-    </button>
-</div>
+                    <button
+                        onClick={toggleStatus}
+                        disabled={loading}
+                        className={`p-3 rounded-full transition duration-300 ${driver.status === 'available'
+                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                : 'bg-green-500 hover:bg-green-600 text-white'
+                            } ${loading && 'opacity-50 cursor-not-allowed'}`}
+                        title={driver.status === 'available' ? 'Set Off Duty' : 'Set On Duty'}
+                    >
+                        <PowerIcon className="h-6 w-6" />
+                    </button>
+                </div>
 
 
                 {/* Show validation errors */}

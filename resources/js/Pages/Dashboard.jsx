@@ -26,7 +26,7 @@ export default function Dashboard() {
         available: 0,
         'On Duty': 0,
         'Off Day': 0,
-    }); 
+    });
 
     useEffect(() => {
         const fetchRequests = async (page = 1) => {
@@ -117,9 +117,9 @@ export default function Dashboard() {
     }, {});
 
     const chartData = [
-        { name: 'Available', uv: driverStatusCounts['available'] || 0 },
-        { name: 'On Duty', uv: driverStatusCounts['on duty'] || 0 },
-        { name: 'Off Day', uv: driverStatusCounts['off duty'] || 0 },
+        { name: 'Available', driver: driverStatusCounts['available'] || 0 },
+        { name: 'On Duty', driver: driverStatusCounts['on duty'] || 0 },
+        { name: 'Off Day', driver: driverStatusCounts['off duty'] || 0 },
     ];
 
     return (
@@ -174,12 +174,12 @@ export default function Dashboard() {
                                     data={chartData}
                                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                                 >
-                                    <CartesianGrid strokeDasharray='3 3' />
-                                    <XAxis dataKey='name' />
-                                    <YAxis />
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis domain={[0, 'dataMax + 1']} allowDecimals={false} />
                                     <Tooltip />
                                     <Legend />
-                                    <Bar dataKey='uv' fill='#82ca9d' activeBar={<Rectangle fill='gold' stroke='purple' />} />
+                                    <Bar dataKey="driver" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -256,25 +256,25 @@ export default function Dashboard() {
                             <h3 className='font-semibold text-gray-700 text-sm'>Recent Activity</h3>
                             <div className='space-y-3 mt-4'>
                                 <div className='flex flex-col space-y-2'>
-                                    {logs.map((log, index) => (
-                                        <div key={index}>
-                                            <p className='font-bold'>{log.name}</p>
-                                            <p>{log.action} to {log.destination} from {log.pickup} at {log.time}</p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className='flex justify-between items-center'>
-                                    <div>
-                                        <h4 className='font-medium text-gray-700 text-sm'>Jane Smith</h4>
-                                        <p className='text-gray-500 text-xs'>Destination: Mall | Time: 11:00 AM</p>
-                                    </div>
+                                    {logs.length > 0 ? (
+                                        logs.map((log, index) => (
+                                            <div key={index} className='border-b pb-2'>
+                                                <p className='font-bold'>{log.name}</p>
+                                                <p className='text-sm text-gray-600'>
+                                                    {log.action} to <span className='font-medium'>{log.destination}</span> from <span className='font-medium'>{log.pickup}</span> at {log.time}
+                                                </p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className='text-gray-500 text-sm'>No recent activity.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
         </DefaultSidebar>
     )
 }

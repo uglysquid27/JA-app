@@ -9,9 +9,16 @@ class Vehicle extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'plate_number', 'model'];
+    protected $fillable = [
+        'plate_number',
+        'brand',
+        'model',
+        'year',
+        'condition',
+    ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function checks()
+    {
+        return $this->hasMany(VehicleCheck::class);
     }
 }
