@@ -5,80 +5,82 @@ import Navbar from '@/Layouts/navbar';
 export default function Home() {
     return (
         <div>
-            {/* Hero Section */}
+            {/* Bagian Hero */}
             <Navbar />
             <section id="hero" className="hero bg-white min-h-screen flex items-center justify-center pt-20">
-                <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
-                    {/* Text Section */}
-                    <div className="lg:w-1/2 text-center lg:text-left font-poppins">
-                        <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                            Corporate
-                            <span className="relative inline-block highlight-blue-sky ml-2">Ride.</span>
-                        </h1>
-                        <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                            Coordination
-                            <span className="relative inline-block highlight-blue ml-2">System.</span>
-                        </h1>
-                        <p className="text-lg text-gray-600 mb-6">
-                            Effortlessly manage VIP transport requests with real-time tracking, automatic logging, and secure driver assignment—all in one system built for enterprise mobility.
-                        </p>
-                        <div className="flex justify-center lg:justify-start space-x-4">
-                            <div className="relative group">
-                                <Link
-                                    href={route('book')}
-                                    className="bg-[#85C4F9] text-black font-bold py-4 px-8 border-2 border-black relative z-10 inline-block text-center"
-                                >
-                                    Book a Ride
-                                </Link>
-                                <div className="absolute top-2 left-2 bg-black w-full h-full z-0 transition-all duration-300 group-hover:top-0 group-hover:left-0"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Image Section */}
-                    <div className="lg:w-1/2 flex items-center justify-center mt-10 lg:mt-0">
-                        <div className="max-w-sm rounded-lg bg-gray-200 flex items-center justify-center" style={{ height: '300px', width: '300px' }}>
-                            <span className="text-gray-500">Image Placeholder</span>
-                        </div>
-                    </div>
+    <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
+        {/* Bagian Teks */}
+        <div className="lg:w-1/2 text-center lg:text-left font-poppins">
+            <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
+                Koordinasi
+                <span className="relative inline-block highlight-blue-sky ml-2">Transportasi.</span>
+            </h1>
+            <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
+                Korporat
+                <span className="relative inline-block highlight-blue ml-2">Efisien.</span>
+            </h1>
+            <p className="text-xl text-gray-700 mb-4 italic">
+                Atur Perjalanan Kantor dengan Mudah dan Cepat.
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+                Tingkatkan efisiensi mobilitas perusahaan dengan sistem pemesanan tumpangan terintegrasi: real-time tracking, pencatatan otomatis, dan penugasan sopir yang aman.
+            </p>
+            <div className="flex justify-center lg:justify-start space-x-4">
+                <div className="relative group">
+                    <Link
+                        href={route('book')}
+                        className="bg-[#85C4F9] text-black font-bold py-4 px-8 border-2 border-black relative z-10 inline-block text-center"
+                    >
+                        Pesan Perjalanan
+                    </Link>
+                    <div className="absolute top-2 left-2 bg-black w-full h-full z-0 transition-all duration-300 group-hover:top-0 group-hover:left-0"></div>
                 </div>
-            </section>
+            </div>
+        </div>
 
+        {/* Gambar */}
+        <div className="lg:w-1/2 flex items-center justify-center mt-10 lg:mt-0">
+            <div className="max-w-sm rounded-lg bg-gray-200 flex items-center justify-center" style={{ height: '300px', width: '300px' }}>
+                <span className="text-gray-500">Placeholder Gambar</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+            {/* Bagian Tentang */}
             <section id="about" className="hero bg-white min-h-12 flex items-center justify-center pt-20">
                 <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
-                    {/* Text Section */}
                     <div className="lg:w-full text-center lg:text-left font-poppins">
                         <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                            About this App
-
+                            Tentang Aplikasi Ini
                         </h1>
                         <p className="text-lg text-gray-600 mb-6">
-                            This application is developed to support the General Affairs (GA) Department in managing the company's internal transportation needs more efficiently and systematically. It simplifies the process of requesting, assigning, and monitoring rides for employees, ensuring effective vehicle utilization and time management.
+                            Aplikasi ini dikembangkan untuk mendukung Departemen General Affairs (GA) dalam mengelola kebutuhan transportasi internal perusahaan secara lebih efisien dan sistematis. Aplikasi ini menyederhanakan proses permintaan, penugasan, dan pemantauan perjalanan karyawan, sehingga memastikan penggunaan kendaraan dan waktu yang efektif.
                         </p>
-
                     </div>
                 </div>
             </section>
 
-            {/* Services Section */}
+            {/* Layanan */}
             <section id="service" className="min-h-24 pt-60 px-8">
                 <div className="max-w-6xl mx-auto text-center font-poppins">
-                    <h2 className="text-4xl font-bold text-black mb-12">Our Services</h2>
+                    <h2 className="text-4xl font-bold text-black mb-12">Layanan Kami</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
                         {[
                             {
-                                title: 'Ride Requests',
-                                description: 'Easily create and manage ride requests.',
+                                title: 'Permintaan Perjalanan',
+                                description: 'Buat dan kelola permintaan perjalanan dengan mudah.',
                                 image: '/img/spread.png',
                             },
                             {
-                                title: 'Driver Assignment',
-                                description: 'Assign drivers in real-time with schedule conflict detection.',
+                                title: 'Penugasan Sopir',
+                                description: 'Tugaskan sopir secara real-time dengan deteksi konflik jadwal.',
                                 image: '/img/treat.png',
                             },
                             {
-                                title: 'Automatic Logging',
-                                description: 'Capture departure and arrival times automatically—no manual input required.',
+                                title: 'Pencatatan Otomatis',
+                                description: 'Waktu keberangkatan dan kedatangan dicatat otomatis—tanpa input manual.',
                                 image: '/img/protect.png',
                             },
                         ].map((service, index) => (
@@ -97,37 +99,37 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* How It Works Section */}
+            {/* Cara Kerja */}
             <section id="how" className="bg-white min-h-screen pt-60 px-8">
                 <div className="max-w-6xl mx-auto text-center font-poppins">
-                    <h2 className="text-4xl font-bold text-black mb-6">How It Works</h2>
+                    <h2 className="text-4xl font-bold text-black mb-6">Cara Kerja</h2>
                     <p className="text-gray-600 text-lg mb-12">
-                        We've made it simple, fast, and accessible for everyone.
+                        Kami membuatnya sederhana, cepat, dan mudah diakses oleh semua orang.
                     </p>
                     <div className="flex flex-col md:flex-row items-center justify-center gap-12">
                         {[
                             {
                                 step: 1,
-                                title: 'Submit Ride Request',
-                                text: 'Employees fill out a request form with destination, pickup time, and purpose.',
+                                title: 'Ajukan Permintaan Perjalanan',
+                                text: 'Karyawan mengisi formulir dengan tujuan, waktu penjemputan, dan keperluan.',
                                 color: '#a0f0c5',
                             },
                             {
                                 step: 2,
-                                title: 'Admin Review & Assignment',
-                                text: 'The GA Admin approves the request and assigns an available driver and vehicle.',
+                                title: 'Tinjauan & Penugasan Admin',
+                                text: 'Admin GA menyetujui permintaan dan menugaskan sopir serta kendaraan yang tersedia.',
                                 color: '#85C4F9',
                             },
                             {
                                 step: 3,
-                                title: 'Driver Executes the Ride',
-                                text: 'The assigned driver carries out the trip and updates the ride status in the system.',
+                                title: 'Pelaksanaan Perjalanan',
+                                text: 'Sopir yang ditugaskan melaksanakan perjalanan dan memperbarui status di sistem.',
                                 color: '#a0f0c5',
                             },
                             {
                                 step: 4,
-                                title: 'Ride Completion & Logging',
-                                text: 'The ride is marked complete and stored in the system for tracking and reporting.',
+                                title: 'Penyelesaian & Pencatatan',
+                                text: 'Perjalanan ditandai selesai dan tercatat di sistem untuk pelacakan dan laporan.',
                                 color: '#85C4F9',
                             },
                         ].map(({ step, title, text, color }) => (
@@ -143,7 +145,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Inline style classes */}
+            {/* Gaya CSS inline */}
             <style>
                 {`
           .highlight-blue::before, .highlight-blue-sky::before {

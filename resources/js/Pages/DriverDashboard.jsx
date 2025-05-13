@@ -2,6 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import DefaultSidebar from '@/Layouts/sidebarLayout';
 import { useState, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
+import { PowerIcon } from '@heroicons/react/24/solid';
 
 // Timer component to show running time
 function RunningTime({ startTime }) {
@@ -70,17 +71,20 @@ export default function DriverDashboard({ driver, assignedRequest }) {
 
                 {/* Toggle Status Button */}
                 <div className="flex gap-2 mb-4">
-                    <button
-                        onClick={toggleStatus}
-                        disabled={loading}
-                        className={`px-4 py-2 rounded font-semibold text-white transition ${driver.status === 'available'
-                            ? 'bg-red-500 hover:bg-red-600'
-                            : 'bg-green-500 hover:bg-green-600'
-                            } ${loading && 'opacity-50 cursor-not-allowed'}`}
-                    >
-                        {loading ? 'Updating...' : (driver.status === 'available' ? 'Set Off Duty' : 'Set On Duty')}
-                    </button>
-                </div>
+    <button
+        onClick={toggleStatus}
+        disabled={loading}
+        className={`p-3 rounded-full transition duration-300 ${
+            driver.status === 'available'
+                ? 'bg-red-500 hover:bg-red-600 text-white'
+                : 'bg-green-500 hover:bg-green-600 text-white'
+        } ${loading && 'opacity-50 cursor-not-allowed'}`}
+        title={driver.status === 'available' ? 'Set Off Duty' : 'Set On Duty'}
+    >
+        <PowerIcon className="h-6 w-6" />
+    </button>
+</div>
+
 
                 {/* Show validation errors */}
                 {errors.status && <div className="text-red-500 mb-2">{errors.status}</div>}
