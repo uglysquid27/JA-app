@@ -36,6 +36,6 @@ class VehicleCheck extends Model
 
     public function request()
     {
-        return $this->belongsTo(RideRequest::class, 'request_id');
+        return $this->belongsTo(Request::class, 'request_id');
     }
 }
