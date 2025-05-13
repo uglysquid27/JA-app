@@ -42,6 +42,8 @@ Route::get('/requests', [RequestController::class, 'index']);
 Route::post('/api/requests', [RequestController::class, 'store']);
 Route::get('/request/today-count', [RequestController::class, 'getTodayRequestCount']);
 
+Route::resource('vehicle-checks', \App\Http\Controllers\VehicleCheckController::class);
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

@@ -31,20 +31,28 @@ export default function DefaultSidebar({ header, children }) {
                     </div>
                     <List className="space-y-6">
                         <Link href={route('dashboard')}>
-                        <ListItem className="rounded-lg hover:bg-blue-gray-50">
-                            <ListItemPrefix>
-                                <PresentationChartBarIcon className="h-5 w-5" />
-                            </ListItemPrefix>
-                            <p className="px-4">Dashboard</p>
-                        </ListItem>
+                            <ListItem className="rounded-lg hover:bg-blue-gray-50">
+                                <ListItemPrefix>
+                                    <PresentationChartBarIcon className="h-5 w-5" />
+                                </ListItemPrefix>
+                                <p className="px-4">Dashboard</p>
+                            </ListItem>
                         </Link>
                         <Link href={route('book')}>
-                        <ListItem className="rounded-lg hover:bg-blue-gray-50">
-                            <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
-                            </ListItemPrefix>
-                            <p className="px-4">Book a ride</p>
-                        </ListItem>
+                            <ListItem className="rounded-lg hover:bg-blue-gray-50">
+                                <ListItemPrefix>
+                                    <InboxIcon className="h-5 w-5" />
+                                </ListItemPrefix>
+                                <p className="px-4">Book a ride</p>
+                            </ListItem>
+                        </Link>
+                        <Link href={route('vehicle-checks.index')}>
+                            <ListItem className="rounded-lg hover:bg-blue-gray-50">
+                                <ListItemPrefix>
+                                    <ShoppingBagIcon className="h-5 w-5" />
+                                </ListItemPrefix>
+                                <p className="px-4">Vehicle Check</p>
+                            </ListItem>
                         </Link>
                         <ListItem className="rounded-lg hover:bg-blue-gray-50">
                             <ListItemPrefix>
@@ -60,12 +68,12 @@ export default function DefaultSidebar({ header, children }) {
                             <PowerIcon className="h-5 w-5 text-red-500" />
                         </ListItemPrefix>
                         <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
+                            method="post"
+                            href={route('logout')}
+                            as="button"
+                        >
+                            Log Out
+                        </ResponsiveNavLink>
                     </ListItem>
                 </div>
             </Card>

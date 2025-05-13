@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('vehicle_checks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
-            $table->foreignId('driver_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('cascade');  // Nullable driver_id
             $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
             $table->enum('tire_condition', ['Good', 'Flat', 'Worn'])->default('Good');
             $table->enum('oil_check', ['OK', 'Needs Refill'])->default('OK');
