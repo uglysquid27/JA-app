@@ -11,11 +11,14 @@ use Inertia\Inertia;
 class VehicleCheckController extends Controller
 {
     public function index()
-    {
-        return Inertia::render('VehicleChecks/Index', [
-            'vehicleChecks' => VehicleCheck::with(['vehicle', 'request'])->get()
-        ]);
-    }
+{
+    $vehicleChecks = VehicleCheck::with(['vehicle', 'Request'])->get();
+
+    return Inertia::render('VehicleChecks/Index', [
+        'vehicleChecks' => $vehicleChecks
+    ]);
+}
+
 
     public function create()
     {
