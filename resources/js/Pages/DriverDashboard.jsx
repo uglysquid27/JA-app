@@ -22,7 +22,7 @@ function RunningTime({ startTime }) {
     }, [startTime]);
 
     return (
-        <div className="flex items-center space-x-2 text-sm text-gray-700">
+        <div className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-200">
             <ClockIcon className="h-4 w-4 text-blue-500" />
             <span><strong>Berjalan:</strong> {elapsed}</span>
         </div>
@@ -67,18 +67,18 @@ export default function DriverDashboard({ driver, assignedRequest }) {
         <DefaultSidebar>
             <Head title="Dasbor Pengemudi" />
             <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
-                <div className="bg-white shadow overflow-hidden rounded-lg mb-6">
+                <div className="bg-white dark:bg-gray-700 shadow overflow-hidden rounded-lg mb-6">
                     <div className="px-4 py-5 sm:px-6">
-                        <h1 className="text-xl font-semibold text-gray-900">
-                            Selamat datang, <span className="text-blue-600">{driver.name}</span>
+                        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                            Selamat datang, <span className="text-blue-600 dark:text-blue-300">{driver.name}</span>
                         </h1>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-300">
                             Kelola status dan permintaan perjalanan Anda di sini.
                         </p>
                     </div>
-                    <div className="border-t border-gray-200 px-4 py-5 sm:p-6 bg-gray-50 sm:flex sm:items-center sm:justify-between">
+                    <div className="border-t border-gray-200 px-4 py-5 sm:p-6 bg-gray-50 dark:bg-gray-800 sm:flex sm:items-center sm:justify-between">
                         <div className="flex items-center space-x-3">
-                            <p className="text-sm font-medium text-gray-500">
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-300">
                                 Status Saat Ini:
                             </p>
                             <span
@@ -92,7 +92,7 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                         <button
                             onClick={toggleStatus}
                             disabled={loading}
-                            className={`mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                            className={`mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:border-gray-500 dark:text-gray-400 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                 loading && 'opacity-50 cursor-not-allowed'
                             }`}
                         >
@@ -106,43 +106,43 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                 {/* Permintaan yang Diberikan */}
                 {assignedRequest && (
                     <div className="bg-white shadow overflow-hidden rounded-lg">
-                        <div className="px-4 py-5 sm:px-6 bg-indigo-50 border-b border-gray-200">
-                            <h2 className="text-lg font-semibold text-indigo-700">
+                        <div className="px-4 py-5 sm:px-6 bg-indigo-50 dark:bg-gray-700 border-b border-gray-200">
+                            <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300">
                                 Permintaan Perjalanan Saat Ini
                             </h2>
                         </div>
-                        <div className="px-4 py-5 sm:p-6">
+                        <div className="px-4 py-5 sm:p-6 dark:bg-gray-800">
                             <dl className="divide-y divide-gray-200">
                                 <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        <MapPinIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Penjemputan
+                                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-200">
+                                        <MapPinIcon className="h-5 w-5 inline-block mr-1 text-gray-400 " /> Penjemputan
                                     </dt>
-                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                         {assignedRequest.pickup}
                                     </dd>
                                 </div>
                                 <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
-                                    <dt className="text-sm font-medium text-gray-500">
+                                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-200">
                                         <FlagIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Tujuan
                                     </dt>
-                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                         {assignedRequest.destination}
                                     </dd>
                                 </div>
                                 <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
-                                    <dt className="text-sm font-medium text-gray-500">
+                                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-200">
                                         <ClockIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Waktu
                                     </dt>
-                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                         {new Date(assignedRequest.time).toLocaleString()}
                                     </dd>
                                 </div>
                                 {assignedRequest.status === 'accepted' && assignedRequest.accepted_at && (
                                     <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt className="text-sm font-medium text-gray-500">
+                                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-200">
                                             <ClockIcon className="h-5 w-5 inline-block mr-1 text-blue-500" /> Diterima Pada
                                         </dt>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                             {new Date(assignedRequest.accepted_at).toLocaleString()}
                                             <RunningTime startTime={assignedRequest.accepted_at} />
                                         </dd>
@@ -150,17 +150,17 @@ export default function DriverDashboard({ driver, assignedRequest }) {
                                 )}
                                 {assignedRequest.status === 'done' && assignedRequest.arrived_at && (
                                     <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt className="text-sm font-medium text-gray-500">
+                                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-200">
                                             <CheckCircleIcon className="h-5 w-5 inline-block mr-1 text-purple-500" /> Tiba Pada
                                         </dt>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                             {new Date(assignedRequest.arrived_at).toLocaleString()}
                                         </dd>
                                     </div>
                                 )}
                             </dl>
                         </div>
-                        <div className="px-4 py-4 sm:px-6 bg-gray-50 flex justify-end space-x-2">
+                        <div className="px-4 py-4 sm:px-6 bg-gray-50 dark:bg-gray-600 flex justify-end space-x-2">
                             {assignedRequest.status === 'assigned' && (
                                 <button
                                     onClick={handleAcceptRequest}
