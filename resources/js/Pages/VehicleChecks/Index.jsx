@@ -9,8 +9,8 @@ export default function Index() {
     return (
         <DefaultSidebar>
             <Head title="Cek Kendaraan" />
-            <div className="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow mt-6">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">📋 Daftar Cek Kendaraan</h1>
+            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl shadow mt-6">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">📋 Daftar Cek Kendaraan</h1>
                 <Link 
                     href="/vehicle-checks/create" 
                     className="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
@@ -36,7 +36,7 @@ export default function Index() {
                         <tbody>
                             {vehicleChecks.length > 0 ? (
                                 vehicleChecks.map((check) => (
-                                    <tr key={check.id} className="text-sm text-gray-700">
+                                    <tr key={check.id} className="text-sm text-gray-700 dark:text-gray-100">
                                         <td className="px-4 py-2 border-b">{check.vehicle?.plate_number || '-'}</td>
                                         <td className="px-4 py-2 border-b">{check.driver?.name || '-'}</td>
                                         <td className="px-4 py-2 border-b">{check.rideRequest?.id || '-'}</td>
