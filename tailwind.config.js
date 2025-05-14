@@ -13,7 +13,7 @@ export default {
         './resources/**/*.jsx',
     ],
     
-
+    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {

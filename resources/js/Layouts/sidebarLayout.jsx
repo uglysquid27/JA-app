@@ -43,7 +43,7 @@ export default function DefaultSidebar({ header, children }) {
     };
 
     return (
-        <div className="flex bg-gray-50">
+        <div className="flex bg-gray-50 ">
             {/* Tombol Toggle Sidebar (untuk layar kecil) */}
             {!isLargeScreen && (
                 <button
@@ -149,7 +149,7 @@ export default function DefaultSidebar({ header, children }) {
             </Card>
 
             {/* Konten utama */}
-            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left duration-300 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
+            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left duration-300 ease-in-out dark:bg-gray-900 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
                 <main>{children}</main>
             </div>
         </div>

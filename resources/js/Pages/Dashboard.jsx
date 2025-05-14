@@ -29,6 +29,7 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale'; // Import Indonesian locale
 
 export default function Dashboard() {
+    const [isDark, setIsDark] = useState(() => localStorage.theme === 'dark');
     const [count, setCount] = useState(0);
     const [rideRequests, setRideRequests] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,16 +48,14 @@ export default function Dashboard() {
     const [theme, setTheme] = useState('light'); // State untuk menyimpan tema
 
     useEffect(() => {
-        // Set tema dari localStorage saat komponen di-mount
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme) {
-            setTheme(storedTheme);
-            document.documentElement.setAttribute('data-theme', storedTheme);
+        const root = window.document.documentElement;
+        if (isDark) {
+            root.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
         } else {
-            setTheme('light');
-            document.documentElement.setAttribute('data-theme', 'light');
+            root.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
         }
-
         const fetchRequests = async (page = 1) => {
             setLoadingRequests(true);
             try {
@@ -121,7 +120,7 @@ export default function Dashboard() {
             .catch(err => console.error('Error fetching drivers:', err))
             .finally(() => setLoadingDrivers(false));
 
-    }, [currentPage]);
+    }, [currentPage, isDark]);
 
     const chartData = [
         { name: 'Available', driver: statusCounts['available'] || 0 },
@@ -132,18 +131,11 @@ export default function Dashboard() {
     const formatIndonesianDateTime = (dateTimeString) => {
         try {
             const date = new Date(dateTimeString);
-            return format(date, 'dd MMMM<\ctrl3348>, HH:mm', { locale: id });
+            return format(date, "dd MMMM',' HH:mm", { locale: id });
         } catch (error) {
             console.error('Error formatting date:', error);
             return 'Invalid Date';
         }
-    };
-
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
     };
 
     return (
@@ -152,17 +144,17 @@ export default function Dashboard() {
             <div className='py-6 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
                 <div className='mb-6 flex justify-between items-center'>
                     <div>
-                        <h2 className='text-xl font-semibold text-gray-800'>Dashboard</h2>
+                        <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Dashboard</h2>
                         <p className='text-gray-500'>Pantau aktivitas dan status layanan Anda.</p>
                     </div>
                     <button
-                        onClick={toggleTheme}
-                        className='rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                        onClick={() => setIsDark(!isDark)}
+                        className="rounded-full p-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                        {theme === 'light' ? (
-                            <MoonIcon className='w-6 h-6 text-gray-700' />
+                        {isDark ? (
+                            <SunIcon className="w-6 h-6 text-yellow-400" />
                         ) : (
-                            <SunIcon className='w-6 h-6 text-yellow-400' />
+                            <MoonIcon className="w-6 h-6 text-gray-700" />
                         )}
                     </button>
                 </div>

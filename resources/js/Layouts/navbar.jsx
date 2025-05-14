@@ -106,7 +106,7 @@ const Navbar = () => {
         </div>
 
         {/* Button (Desktop) */}
-        <div className="hidden md:block relative group inline-block">
+        <div className=" md:block relative group inline-block">
           <Link
             href={route('login')}
             className="relative z-10 px-6 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-[#85c4f9] to-[#1e73be] shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105"
