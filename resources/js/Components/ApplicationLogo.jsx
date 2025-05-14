@@ -2,10 +2,10 @@ export default function ApplicationLogo(props) {
     return (
         <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
          width="100.000000pt" height="100.000000pt" viewBox="0 0 350.000000 350.000000"
-         preserveAspectRatio="xMidYMid meet">
+         preserveAspectRatio="xMidYMid meet" className="fill-blue-600 dark:fill-white">
 
         <g transform="translate(0.000000,350.000000) scale(0.100000,-0.100000)"
-        fill="#0000FF" stroke="none">
+        stroke="none">
         <path d="M1524 2566 c-54 -25 -118 -76 -135 -108 -10 -18 -9 -18 30 1 81 42
         155 15 133 -47 -5 -15 -66 -118 -134 -228 -69 -109 -145 -232 -169 -271 -105
         -173 -460 -737 -526 -836 -45 -68 -68 -110 -60 -113 7 -2 507 -3 1112 -2

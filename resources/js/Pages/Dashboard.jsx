@@ -206,15 +206,15 @@ export default function Dashboard() {
                 </div>
 
 
-                <div id='chart' className='bg-white rounded-lg shadow-md p-6 mb-8'>
-                    <h3 className='text-lg font-semibold text-gray-800 mb-4'>Status Pengemudi</h3>
+                <div id='chart' className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8'>
+                <h3 className='text-lg font-semibold text-gray-800 dark:text-white mb-4'>Status Pengemudi</h3>
                     <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={chartData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray='3 3' stroke='#e0e0e0' />
                             <XAxis dataKey='name' tick={{ fill: '#6b7280' }} />
                             <YAxis domain={[0, (dataMax) => (dataMax || 0) + 1]} allowDecimals={false} tick={{ fill: '#6b7280' }} />
                             <Tooltip itemStyle={{ color: '#374151' }} wrapperStyle={{ backgroundColor: '#f3f4f6', padding: '10px', borderRadius: '5px' }} />
-                            <Legend wrapperStyle={{ top: 0, right: 0, backgroundColor: '#fff', borderRadius: 3, lineHeight: '20px' }} />
+                            {/* <Legend wrapperStyle={{ top: 0, right: 0, backgroundColor: '#fff', borderRadius: 3, lineHeight: '20px' }} /> */}
                             <Bar dataKey='driver' fill='#6366F1' activeBar={<Rectangle fill='#a78bfa' stroke='#4f46e5' />} />
                         </BarChart>
                     </ResponsiveContainer>
@@ -223,12 +223,13 @@ export default function Dashboard() {
                 <div id='card' className='grid gap-6 grid-cols-1 md:grid-cols-2 mb-8'>
 
                     {/* Request Section */}
-                    <div className='bg-white rounded-lg shadow-md p-6'>
+                    <div className='bg-white dark:bg-gray-800  rounded-lg shadow-md p-6'>
+
                         <div className="flex items-center mb-4">
                             <div className="p-3 bg-blue-100 border border-blue-200 rounded-full mr-3">
                                 <ArrowsRightLeftIcon className="w-6 h-6 text-blue-500" />
                             </div>
-                            <h3 className='text-lg font-semibold text-gray-800'>Permintaan Terbaru</h3>
+                            <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>Permintaan Terbaru</h3>
                         </div>
                         {loadingRequests ? (
                             <div className="animate-pulse">
@@ -239,8 +240,8 @@ export default function Dashboard() {
                         ) : rideRequests.length > 0 ? (
                             rideRequests.map(request => (
                                 <div key={request.id} className='border-b pb-3 mb-3 last:border-b-0'>
-                                    <h4 className='text-sm font-medium text-gray-700'>{request.name}</h4>
-                                    <p className='text-xs text-gray-500'>
+                                    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>{request.name}</h4>
+                                    <p className='text-xs text-gray-500 dark:text-gray-100'>
                                         <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
                                         <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.time)}
                                     </p>
@@ -257,12 +258,12 @@ export default function Dashboard() {
                     </div>
 
                     {/* Driver Section */}
-                    <div className='bg-white rounded-lg shadow-md p-6'>
+                    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
                         <div className="flex items-center mb-4">
                             <div className="p-3 bg-green-100 border border-green-200 rounded-full mr-3">
                                 <UserIcon className="w-6 h-6 text-green-500" />
                             </div>
-                            <h3 className='text-lg font-semibold text-gray-800'>Status Pengemudi</h3>
+                            <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>Status Pengemudi</h3>
                         </div>
                         {loadingDrivers ? (
                             <div className="animate-pulse">
@@ -278,7 +279,7 @@ export default function Dashboard() {
                                 const textColor = 'text-white';
                                 return (
                                     <div key={index} className='flex justify-between items-center border-b pb-3 mb-3 last:border-b-0'>
-                                        <h4 className='text-sm font-medium text-gray-700'>{driver.name || 'Pengemudi Tanpa Nama'}</h4>
+                                        <h4 className='text-sm font-medium text-gray-700 dark:text-gray-100'>{driver.name || 'Pengemudi Tanpa Nama'}</h4>
                                         <span className={`${statusColor} ${textColor} text-xs font-medium py-1 px-2 rounded-full`}>{driver.status}</span>
                                     </div>
                                 );
@@ -290,9 +291,9 @@ export default function Dashboard() {
                 </div>
 
 
-                <div id='activity' className='bg-white rounded-lg shadow-md p-6'>
+                <div id='activity' className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
                     <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center'>
-                        <EnvelopeIcon className="w-6 h-6 text-gray-500 mr-2" /> Aktivitas Terakhir
+                        <EnvelopeIcon className="w-6 h-6 text-gray-500 dark:text-gray-100 mr-2" /> Aktivitas Terakhir
                     </h3>
                     {loadingLogs ? (
                         <div className="animate-pulse">
@@ -307,8 +308,8 @@ export default function Dashboard() {
                                     <EnvelopeIcon className="w-5 h-5 text-gray-400" />
                                 </div>
                                 <div>
-                                    <p className='font-medium text-gray-700'>{log.name}</p>
-                                    <p className='text-sm text-gray-600'>
+                                    <p className='font-medium text-gray-700 dark:text-gray-200'>{log.name}</p>
+                                    <p className='text-sm text-gray-600 dark:text-gray-100'>
                                         <span className='font-semibold'>{log.action}</span> ke <span className='font-medium'>{log.destination}</span> dari <span className='font-medium'>{log.pickup}</span> pada {log.time}
                                     </p>
                                 </div>

@@ -43,7 +43,7 @@ export default function DefaultSidebar({ header, children }) {
     };
 
     return (
-        <div className="flex bg-gray-50 ">
+        <div className="flex bg-gray-50 dark:dark:bg-gray-900 transition-colors duration-500 ease-in-out ">
             {/* Tombol Toggle Sidebar (untuk layar kecil) */}
             {!isLargeScreen && (
                 <button
@@ -60,7 +60,7 @@ export default function DefaultSidebar({ header, children }) {
 
             {/* Sidebar */}
             <Card
-                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white border-r border-blue-gray-200 transition-transform duration-300 ease-in-out ${isSidebarOpen || isLargeScreen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white dark:bg-gray-800 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'translate-x-0' : '-translate-x-full'}`}
                 style={{
                     transform: isSidebarOpen || isLargeScreen ? 'translateX(0)' : 'translateX(-100%)',
                 }}
@@ -76,7 +76,7 @@ export default function DefaultSidebar({ header, children }) {
                             </button>
                         )}
                     </div>
-                    <List className="space-y-3">
+                    <List className="space-y-3 dark:text-gray-100">
                         <Link href={route('dashboard')}>
                             <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
                                 <ListItemPrefix className="mr-3">
@@ -149,7 +149,7 @@ export default function DefaultSidebar({ header, children }) {
             </Card>
 
             {/* Konten utama */}
-            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left duration-300 ease-in-out dark:bg-gray-900 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
+            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left dark:bg-gray-900 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
                 <main>{children}</main>
             </div>
         </div>
