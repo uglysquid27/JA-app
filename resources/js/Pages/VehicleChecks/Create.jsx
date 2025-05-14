@@ -62,7 +62,7 @@ export default function Create({ vehicles, requests, auth }) {
                     </div>
 
                     <div>
-                        <label>Request</label>
+                        <label>Driver</label>
                         <select
                             value={data.request_id}
                             onChange={(e) => setData('request_id', e.target.value)}
@@ -71,7 +71,7 @@ export default function Create({ vehicles, requests, auth }) {
                             <option value="">Select a ride request</option>
                             {requests.map((r) => (
                                 <option key={r.id} value={r.id}>
-                                    Request #{r.id}
+                                    Request #{r.id} - Driver: {r.driver?.name} - Requester: {r.requester?.name}
                                 </option>
                             ))}
                         </select>
