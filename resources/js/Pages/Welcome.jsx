@@ -8,13 +8,15 @@ export default function Home() {
     return (
         <div className="font-poppins">
             {/* Hero Section */}
-            <section id="hero" className="bg-white h-screen flex items-center justify-center">
+            <section id="hero" className="relative bg-white h-screen flex items-center overflow-hidden">
                 <Navbar />
-                <div className="container mx-auto px-6 md:px-20 flex flex-col lg:flex-row items-center justify-center text-center lg:text-left">
+
+                {/* Main Hero Content */}
+                <div className="relative z-10 container mx-auto px-6 md:px-20 flex flex-col lg:flex-row items-center justify-center text-center lg:text-left">
                     {/* Text Content */}
                     <div className="lg:w-1/2 mb-10 lg:mb-0">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
-                            Koordinasi <span className="text-blue-600">Transportasi</span> Korporat yang <span className="text-green-600">Efisien</span>.
+                            Koordinasi <span className="text-blue-600">Transportasi</span> yang <span className="text-blue-600">Efisien</span>.
                         </h1>
                         <p className="text-lg md:text-xl text-gray-700 mb-8 italic">
                             Atur setiap perjalanan kantor dengan mulus dan efisien.
@@ -34,28 +36,43 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Image */}
+                    {/* Image Content */}
                     <div className="lg:w-1/2 flex items-center justify-center">
-                        <img src="/img/corporate-transport.svg" alt="Ilustrasi Transportasi Korporat" className="max-w-md rounded-lg shadow-xl" />
+                        <img src="/img/vectorHero.png" alt="Ilustrasi Transportasi Korporat" className="max-w-xl rounded-lg w-full" />
                     </div>
                 </div>
-            </section>
 
-            {/* About Section */}
-            <section id="about" className="py-20 bg-white h-screen flex items-center justify-center">
-                <div className="container mx-auto px-6 md:px-20 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Tentang Aplikasi Kami</h2>
-                    <p className="text-lg text-gray-700 mb-10">
-                        Kami hadir untuk merevolusi cara Departemen General Affairs (GA) mengelola transportasi internal perusahaan. Aplikasi ini dirancang dengan fokus pada kemudahan penggunaan, efisiensi, dan visibilitas. Dengan fitur-fitur canggih, Anda dapat mengoptimalkan alokasi kendaraan, meminimalkan waktu tunggu, dan mendapatkan data perjalanan yang akurat untuk pengambilan keputusan yang lebih baik.
-                    </p>
-                    <p className="text-md md:text-lg text-gray-600">
-                        Misi kami adalah membantu perusahaan Anda bergerak lebih cerdas dan efisien.
-                    </p>
+                {/* Cloud-like Wave SVG at Bottom */}
+                <div className="absolute bottom-0 left-0 w-full z-0 overflow-hidden">
+                    <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="w-full h-auto">
+                        {/* Cloud Wave 1 - Light Blue */}
+                        <path
+                            fill="#a9d7fc"
+                            fillOpacity="1"
+                            d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,208C672,213,768,203,864,176C960,149,1056,107,1152,112C1248,117,1344,171,1392,197.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+                        ></path>
+
+                        {/* Cloud Wave 2 - Medium Blue */}
+                        <path
+                            fill="#bae6fd"
+                            fillOpacity="1"
+                            d="M0,192L60,186.7C120,181,240,171,360,176C480,181,600,203,720,208C840,213,960,203,1080,192C1200,181,1320,171,1380,165.3L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                        ></path>
+
+                        {/* Cloud Wave 3 - Soft Blue */}
+                        <path
+                            fill="#e0f2fe"
+                            fillOpacity="1"
+                            d="M0,256L48,240C96,224,192,192,288,176C384,160,480,160,576,170.7C672,181,768,203,864,197.3C960,192,1056,160,1152,144C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+                        ></path>
+                    </svg>
                 </div>
             </section>
 
+
+
             {/* Services Section */}
-            <section id="service" className="py-24 bg-white h-screen flex items-center justify-center">
+            <section id="service" className="py-24 bg-[#e0f2fe] h-screen flex items-center justify-center">
                 <div className="container mx-auto px-6 md:px-20 text-center flex flex-col items-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-12">Layanan Utama</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-center">
@@ -79,7 +96,7 @@ export default function Home() {
             </section>
 
             {/* How It Works Section */}
-            <section id="how" className="py-24 bg-white h-screen flex items-center justify-center">
+            <section id="how" className="py-24 bg-[#e0f2fe] h-screen flex items-center justify-center">
                 <div className="container mx-auto px-6 md:px-20 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Bagaimana Cara Kerjanya?</h2>
                     <p className="text-lg text-gray-700 mb-12">
