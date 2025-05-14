@@ -13,10 +13,15 @@ class Request extends Model
         'name',
         'pickup',
         'destination',
-        'time',
+        // 'time',
         'status',
         'driver_id',
         'assigned_at',
+        'accepted_at', // Make sure this is included if you're using mass assignment
+    ];
+
+    protected $dates = [
+        'accepted_at', // So it's automatically cast as a Carbon date
     ];
 
     /**

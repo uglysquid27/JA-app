@@ -107,14 +107,14 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Pengecekan Kendaraan</Typography>
                             </ListItem>
                         </Link>
-                        <Link href="#" className="disabled">
+                        <Link href={route('driver.dashboard')}>
                             <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-gray-100 rounded-md p-2">
                                         <UserCircleIcon className="h-5 w-5 text-gray-500" />
                                     </div>
                                 </ListItemPrefix>
-                                <Typography color="blue-gray" className="font-medium">Manajemen Pengguna</Typography>
+                                <Typography color="blue-gray" className="font-medium">Driver</Typography>
                             </ListItem>
                         </Link>
                         <Link href="#" className="disabled">

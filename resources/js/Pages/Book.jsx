@@ -7,6 +7,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import DefaultSidebar from '@/Layouts/sidebarLayout';
 import { Head } from '@inertiajs/react';
+import dayjs from 'dayjs';
 
 const primaryColor = '#4F46E5'; // Tailwind indigo-600
 
@@ -231,7 +232,7 @@ export default function Book() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formattedTime = new Date(form.time).toISOString().slice(0, 19).replace('T', ' ');
+    const formattedTime = dayjs(form.time).format('YYYY-MM-DD HH:mm:ss');
 
     const data = {
       ...form,

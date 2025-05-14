@@ -87,7 +87,7 @@ public function assignDriver(Request $request)
     $requestModel->assigned_at = Carbon::now();
     $requestModel->status = 'assigned';
     $requestModel->save();
-
+    
     // Find the driver and change their status to 'on duty'
     $driver = Driver::findOrFail($request->driver_id);
     $driver->status = 'On Duty';  // Change driver's status

@@ -11,16 +11,18 @@ export default function AssignRequest({ request, drivers }) {
     const [successMessage, setSuccessMessage] = useState('')
 
     const handleSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        console.log(data); // 👀 log to inspect
         post('/assign-driver', {
             onSuccess: () => {
-                setSuccessMessage('Driver berhasil ditugaskan.')
+                setSuccessMessage('Driver berhasil ditugaskan.');
             },
             onError: () => {
-                setSuccessMessage('')
-            }
-        })
-    }
+                setSuccessMessage('');
+            },
+        });
+    };
+    
 
     return (
         <DefaultSidebar>

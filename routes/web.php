@@ -8,6 +8,8 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\DriverController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\HistoryLogController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 
 Route::get('/test', function () {
@@ -48,6 +50,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/driver/dashboard', [DriverController::class, 'dashboard'])->name('driver.dashboard');
     Route::post('/driver/status', [DriverController::class, 'updateStatus'])->name('driver.status');
@@ -55,6 +58,44 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/driver/complete-request', [DriverController::class, 'completeRequest'])->name('driver.complete');
 
 });
+
+// Route::middleware(['auth'])->group(function () {
+//     // Dashboard route, accessible to both admin and driver
+//     Route::get('/driver/dashboard', function () {
+//         if (in_array(Auth::user()->role, ['driver', 'admin'])) {
+//             return Inertia::render('DriverDashboard', [
+//                 'driver' => Auth::user(),
+//             ]);
+//         }
+//         return redirect('/');
+//     })->name('driver.dashboard');
+
+//     // Update driver status route, accessible to both admin and driver
+//     Route::put('/driver/status', function (Request $request) {
+//         if (in_array(Auth::user()->role, ['driver', 'admin'])) {
+//             return app(DriverController::class)->updateStatus($request);
+//         }
+//         abort(403);
+//     })->name('driver.status');
+
+//     // Accept request route, accessible to both admin and driver
+//     Route::post('/driver/accept-request', function (Request $request) {
+//         if (in_array(Auth::user()->role, ['driver', 'admin'])) {
+//             return app(DriverController::class)->acceptRequest($request);
+//         }
+//         abort(403);
+//     })->name('driver.acceptRequest');
+
+//     // Complete request route, accessible to both admin and driver
+//     Route::post('/driver/complete-request', function (Request $request) {
+//         if (in_array(Auth::user()->role, ['driver', 'admin'])) {
+//             return app(DriverController::class)->completeRequest($request);
+//         }
+//         abort(403);
+//     })->name('driver.complete');
+// });
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
