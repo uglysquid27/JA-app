@@ -2,9 +2,9 @@ import { Head, useForm } from '@inertiajs/react';
 import DefaultSidebar from '@/Layouts/sidebarLayout';
 import { useState, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import { PowerIcon } from '@heroicons/react/24/solid';
+import { PowerIcon, MapPinIcon, FlagIcon, ClockIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 
-// Timer component to show running time
+// Komponen Timer untuk menampilkan durasi perjalanan
 function RunningTime({ startTime }) {
     const [elapsed, setElapsed] = useState('');
 
@@ -21,33 +21,34 @@ function RunningTime({ startTime }) {
         return () => clearInterval(interval);
     }, [startTime]);
 
-    return <p><strong>Time Running:</strong> {elapsed}</p>;
+    return (
+        <div className="flex items-center space-x-2 text-sm text-gray-700">
+            <ClockIcon className="h-4 w-4 text-blue-500" />
+            <span><strong>Berjalan:</strong> {elapsed}</span>
+        </div>
+    );
 }
 
 export default function DriverDashboard({ driver, assignedRequest }) {
     const [loading, setLoading] = useState(false);
-    const { setData, post, processing, errors, reset } = useForm({
-        status: driver.status || '',
-    });
+    const { post, processing, errors } = useForm({});
 
     const toggleStatus = () => {
         const newStatus = driver.status === 'available' ? 'off duty' : 'available';
-
         setLoading(true);
-
         Inertia.post(route('driver.status'), { status: newStatus }, {
             onSuccess: () => {
                 Inertia.reload({ only: ['driver'] });
             },
             onFinish: () => setLoading(false),
-            onError: (error) => console.error("Status update failed", error),
+            onError: (error) => console.error("Gagal memperbarui status", error),
         });
     };
 
     const handleAcceptRequest = () => {
         post('/driver/accept-request', {}, {
             onSuccess: () => {
-                Inertia.reload({ only: ['assignedRequest'] }); // Refresh the ride card
+                Inertia.reload({ only: ['assignedRequest'] });
             },
             onError: (error) => console.error(error),
         });
@@ -56,7 +57,7 @@ export default function DriverDashboard({ driver, assignedRequest }) {
     const handleRideDone = () => {
         post('/driver/complete-request', {}, {
             onSuccess: () => {
-                Inertia.reload({ only: ['assignedRequest'] }); // Refresh the ride card
+                Inertia.reload({ only: ['assignedRequest'] });
             },
             onError: (error) => console.error(error),
         });
@@ -64,77 +65,123 @@ export default function DriverDashboard({ driver, assignedRequest }) {
 
     return (
         <DefaultSidebar>
-            <Head title="Driver Dashboard" />
-            <div className="max-w-xl mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Welcome, {driver.name}</h1>
-                <p className="mb-2">Current Status: <strong>{driver.status}</strong></p>
-
-                {/* Toggle Status Button */}
-                <div className="flex gap-2 mb-4">
-                    <button
-                        onClick={toggleStatus}
-                        disabled={loading}
-                        className={`p-3 rounded-full transition duration-300 ${driver.status === 'available'
-                                ? 'bg-red-500 hover:bg-red-600 text-white'
-                                : 'bg-green-500 hover:bg-green-600 text-white'
-                            } ${loading && 'opacity-50 cursor-not-allowed'}`}
-                        title={driver.status === 'available' ? 'Set Off Duty' : 'Set On Duty'}
-                    >
-                        <PowerIcon className="h-6 w-6" />
-                    </button>
+            <Head title="Dasbor Pengemudi" />
+            <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
+                <div className="bg-white shadow overflow-hidden rounded-lg mb-6">
+                    <div className="px-4 py-5 sm:px-6">
+                        <h1 className="text-xl font-semibold text-gray-900">
+                            Selamat datang, <span className="text-blue-600">{driver.name}</span>
+                        </h1>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            Kelola status dan permintaan perjalanan Anda di sini.
+                        </p>
+                    </div>
+                    <div className="border-t border-gray-200 px-4 py-5 sm:p-6 bg-gray-50 sm:flex sm:items-center sm:justify-between">
+                        <div className="flex items-center space-x-3">
+                            <p className="text-sm font-medium text-gray-500">
+                                Status Saat Ini:
+                            </p>
+                            <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    driver.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}
+                            >
+                                {driver.status === 'available' ? 'Tersedia' : 'Tidak Bertugas'}
+                            </span>
+                        </div>
+                        <button
+                            onClick={toggleStatus}
+                            disabled={loading}
+                            className={`mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                loading && 'opacity-50 cursor-not-allowed'
+                            }`}
+                        >
+                            <PowerIcon className={`h-5 w-5 mr-2 ${driver.status === 'available' ? 'text-red-500' : 'text-green-500'}`} />
+                            {driver.status === 'available' ? 'Nonaktifkan' : 'Aktifkan'}
+                        </button>
+                    </div>
+                    {errors.status && <div className="px-4 py-3 bg-red-50 text-red-500 text-sm">{errors.status}</div>}
                 </div>
 
-
-                {/* Show validation errors */}
-                {errors.status && <div className="text-red-500 mb-2">{errors.status}</div>}
-
-                {/* Assigned Request Card */}
+                {/* Permintaan yang Diberikan */}
                 {assignedRequest && (
-                    <div className="bg-yellow-100 p-4 rounded shadow">
-                        <h2 className="text-lg font-semibold mb-2">Ride Request</h2>
-                        <p><strong>Pickup:</strong> {assignedRequest.pickup}</p>
-                        <p><strong>Destination:</strong> {assignedRequest.destination}</p>
-                        <p><strong>Time:</strong> {new Date(assignedRequest.time).toLocaleString()}</p>
-
-                        {/* Pending - show Accept button */}
-                        {assignedRequest.status === 'assigned' && (
-                            <button
-                                onClick={handleAcceptRequest}
-                                disabled={processing}
-                                className={`mt-3 px-4 py-2 text-white rounded ${processing ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-                            >
-                                {processing ? 'Accepting...' : 'Accept Request'}
-                            </button>
-                        )}
-
-                        {/* Accepted - show status, accepted time, timer, and done button */}
-                        {/* Accepted - show status, accepted time, timer, and done button */}
-                        {assignedRequest.status === 'accepted' && (
-                            <div className="mt-4 border-t pt-3 space-y-2 text-sm text-gray-800">
-                                <p className="text-green-700 font-semibold">Status: Accepted</p>
-                                <p><strong>Accepted At:</strong> {new Date(assignedRequest.accepted_at).toLocaleString()}</p>
-                                <RunningTime startTime={assignedRequest.accepted_at} />
+                    <div className="bg-white shadow overflow-hidden rounded-lg">
+                        <div className="px-4 py-5 sm:px-6 bg-indigo-50 border-b border-gray-200">
+                            <h2 className="text-lg font-semibold text-indigo-700">
+                                Permintaan Perjalanan Saat Ini
+                            </h2>
+                        </div>
+                        <div className="px-4 py-5 sm:p-6">
+                            <dl className="divide-y divide-gray-200">
+                                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        <MapPinIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Penjemputan
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {assignedRequest.pickup}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        <FlagIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Tujuan
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {assignedRequest.destination}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        <ClockIcon className="h-5 w-5 inline-block mr-1 text-gray-400" /> Waktu
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {new Date(assignedRequest.time).toLocaleString()}
+                                    </dd>
+                                </div>
+                                {assignedRequest.status === 'accepted' && assignedRequest.accepted_at && (
+                                    <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                        <dt className="text-sm font-medium text-gray-500">
+                                            <ClockIcon className="h-5 w-5 inline-block mr-1 text-blue-500" /> Diterima Pada
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {new Date(assignedRequest.accepted_at).toLocaleString()}
+                                            <RunningTime startTime={assignedRequest.accepted_at} />
+                                        </dd>
+                                    </div>
+                                )}
+                                {assignedRequest.status === 'done' && assignedRequest.arrived_at && (
+                                    <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                        <dt className="text-sm font-medium text-gray-500">
+                                            <CheckCircleIcon className="h-5 w-5 inline-block mr-1 text-purple-500" /> Tiba Pada
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {new Date(assignedRequest.arrived_at).toLocaleString()}
+                                        </dd>
+                                    </div>
+                                )}
+                            </dl>
+                        </div>
+                        <div className="px-4 py-4 sm:px-6 bg-gray-50 flex justify-end space-x-2">
+                            {assignedRequest.status === 'assigned' && (
+                                <button
+                                    onClick={handleAcceptRequest}
+                                    disabled={processing}
+                                    className={`inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                                        processing && 'opacity-50 cursor-not-allowed'
+                                    }`}
+                                >
+                                    {processing ? 'Menerima...' : 'Terima Permintaan'}
+                                </button>
+                            )}
+                            {assignedRequest.status === 'accepted' && (
                                 <button
                                     onClick={handleRideDone}
                                     disabled={processing}
-                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+                                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                                 >
-                                    {processing ? 'Marking...' : 'Mark as Arrived'}
+                                    {processing ? 'Menandai...' : 'Tandai Tiba'}
                                 </button>
-                            </div>
-                        )}
-
-                        {/* Done - show arrived time */}
-                        {assignedRequest.status === 'done' && (
-                            <div className="mt-4 border-t pt-3 space-y-2 text-sm text-gray-800">
-                                <p className="text-purple-700 font-semibold">Status: Arrived</p>
-                                <p><strong>Accepted At:</strong> {new Date(assignedRequest.accepted_at).toLocaleString()}</p>
-                                <p><strong>Arrived At:</strong> {new Date(assignedRequest.arrived_at).toLocaleString()}</p>
-                                <RunningTime startTime={assignedRequest.accepted_at} />
-                            </div>
-                        )}
-
-
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
