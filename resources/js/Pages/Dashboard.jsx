@@ -152,7 +152,7 @@ export default function Dashboard() {
             <div className='py-6 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
                 <div className='mb-6 flex justify-between items-center'>
                     <div>
-                        <h2 className='text-xl font-semibold text-gray-800'>Dasbor</h2>
+                        <h2 className='text-xl font-semibold text-gray-800'>Dashboard</h2>
                         <p className='text-gray-500'>Pantau aktivitas dan status layanan Anda.</p>
                     </div>
                     <button

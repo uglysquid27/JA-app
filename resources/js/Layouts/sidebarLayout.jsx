@@ -84,7 +84,7 @@ export default function DefaultSidebar({ header, children }) {
                                         <PresentationChartBarIcon className="h-5 w-5 text-blue-500" />
                                     </div>
                                 </ListItemPrefix>
-                                <Typography color="blue-gray" className="font-medium">Dasbor</Typography>
+                                <Typography color="blue-gray" className="font-medium">Dashboard</Typography>
                             </ListItem>
                         </Link>
                         <Link href={route('book')}>
