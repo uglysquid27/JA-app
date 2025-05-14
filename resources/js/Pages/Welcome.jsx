@@ -1,175 +1,116 @@
 import React from 'react';
 import { Link } from '@inertiajs/inertia-react';
 import Navbar from '@/Layouts/navbar';
+import Footer from '@/Layouts/footer';
+import { FaCar, FaCalendarCheck, FaClock } from 'react-icons/fa';
 
 export default function Home() {
     return (
-        <div>
-            {/* Bagian Hero */}
-            <Navbar />
-            <section id="hero" className="hero bg-white min-h-screen flex items-center justify-center pt-20">
-    <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
-        {/* Bagian Teks */}
-        <div className="lg:w-1/2 text-center lg:text-left font-poppins">
-            <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                Koordinasi
-                <span className="relative inline-block highlight-blue-sky ml-2">Transportasi.</span>
-            </h1>
-            {/* <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                Korporat
-                <span className="relative inline-block highlight-blue ml-2">Efisien.</span>
-            </h1> */}
-            <p className="text-xl text-gray-700 mb-4 italic">
-                Atur Perjalanan Kantor dengan Mudah dan Cepat.
-            </p>
-            <p className="text-lg text-gray-600 mb-6">
-                Tingkatkan efisiensi mobilitas perusahaan dengan sistem pemesanan tumpangan terintegrasi: real-time tracking, pencatatan otomatis, dan penugasan sopir yang aman.
-            </p>
-            <div className="flex justify-center lg:justify-start space-x-4">
-                <div className="relative group">
-                    <Link
-                        href={route('login')}
-                        className="bg-[#85C4F9] text-black font-bold py-4 px-8 border-2 border-black relative z-10 inline-block text-center"
-                    >
-                        Pesan Perjalanan
-                    </Link>
-                    <div className="absolute top-2 left-2 bg-black w-full h-full z-0 transition-all duration-300 group-hover:top-0 group-hover:left-0"></div>
-                </div>
-            </div>
-        </div>
-
-        {/* Gambar */}
-        <div className="lg:w-1/2 flex items-center justify-center mt-10 lg:mt-0">
-            <div className="max-w-sm rounded-lg bg-gray-200 flex items-center justify-center" style={{ height: '300px', width: '300px' }}>
-                <span className="text-gray-500">Placeholder Gambar</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-            {/* Bagian Tentang */}
-            <section id="about" className="hero bg-white min-h-12 flex items-center justify-center pt-20">
-                <div className="hero-content flex flex-col lg:flex-row items-center lg:justify-between px-6 lg:px-20 w-full max-w-7xl">
-                    <div className="lg:w-full text-center lg:text-left font-poppins">
-                        <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-black">
-                            Tentang Aplikasi Ini
+        <div className="font-poppins">
+            {/* Hero Section */}
+            <section id="hero" className="bg-white h-screen flex items-center justify-center">
+                <Navbar />
+                <div className="container mx-auto px-6 md:px-20 flex flex-col lg:flex-row items-center justify-center text-center lg:text-left">
+                    {/* Text Content */}
+                    <div className="lg:w-1/2 mb-10 lg:mb-0">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
+                            Koordinasi <span className="text-blue-600">Transportasi</span> Korporat yang <span className="text-green-600">Efisien</span>.
                         </h1>
-                        <p className="text-lg text-gray-600 mb-6">
-                            Aplikasi ini dikembangkan untuk mendukung Departemen General Affairs (GA) dalam mengelola kebutuhan transportasi internal perusahaan secara lebih efisien dan sistematis. Aplikasi ini menyederhanakan proses permintaan, penugasan, dan pemantauan perjalanan karyawan, sehingga memastikan penggunaan kendaraan dan waktu yang efektif.
+                        <p className="text-lg md:text-xl text-gray-700 mb-8 italic">
+                            Atur setiap perjalanan kantor dengan mulus dan efisien.
                         </p>
+                        <p className="text-md md:text-lg text-gray-600 mb-8">
+                            Tingkatkan produktivitas tim Anda dengan sistem pemesanan transportasi terpusat. Pantau lokasi kendaraan secara langsung, catat perjalanan secara otomatis, dan pastikan setiap penugasan sopir aman dan terkelola dengan baik.
+                        </p>
+                        <div className="flex justify-center lg:justify-start">
+                            <Link
+                                href={route('login')}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition duration-300 ease-in-out"
+                            >
+                                <span className="flex items-center">
+                                    <FaCar className="mr-2" /> Pesan Perjalanan
+                                </span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Image */}
+                    <div className="lg:w-1/2 flex items-center justify-center">
+                        <img src="/img/corporate-transport.svg" alt="Ilustrasi Transportasi Korporat" className="max-w-md rounded-lg shadow-xl" />
                     </div>
                 </div>
             </section>
 
-            {/* Layanan */}
-            <section id="service" className="min-h-24 pt-60 px-8">
-                <div className="max-w-6xl mx-auto text-center font-poppins">
-                    <h2 className="text-4xl font-bold text-black mb-12">Layanan Kami</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-                        {[
-                            {
-                                title: 'Permintaan Perjalanan',
-                                description: 'Buat dan kelola permintaan perjalanan dengan mudah.',
-                                image: '/img/spread.png',
-                            },
-                            {
-                                title: 'Penugasan Sopir',
-                                description: 'Tugaskan sopir secara real-time dengan deteksi konflik jadwal.',
-                                image: '/img/treat.png',
-                            },
-                            {
-                                title: 'Pencatatan Otomatis',
-                                description: 'Waktu keberangkatan dan kedatangan dicatat otomatis—tanpa input manual.',
-                                image: '/img/protect.png',
-                            },
-                        ].map((service, index) => (
-                            <div key={index} className="relative h-full w-full max-w-sm">
-                                <div className="absolute top-2 left-2 w-full h-full bg-[#85C4F9] rounded-lg z-0"></div>
-                                <div className="relative bg-white border-2 border-black rounded-lg p-8 z-10 h-full flex flex-col items-center">
-                                    <div className="mb-6">
-                                        <img src={service.image} alt={service.title} className="mx-auto w-14 h-14 scale-150" />
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-3 text-black">{service.title}</h3>
-                                    <p className="text-gray-600 text-center">{service.description}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Cara Kerja */}
-            <section id="how" className="bg-white min-h-screen pt-60 px-8">
-                <div className="max-w-6xl mx-auto text-center font-poppins">
-                    <h2 className="text-4xl font-bold text-black mb-6">Cara Kerja</h2>
-                    <p className="text-gray-600 text-lg mb-12">
-                        Kami membuatnya sederhana, cepat, dan mudah diakses oleh semua orang.
+            {/* About Section */}
+            <section id="about" className="py-20 bg-white h-screen flex items-center justify-center">
+                <div className="container mx-auto px-6 md:px-20 text-center">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Tentang Aplikasi Kami</h2>
+                    <p className="text-lg text-gray-700 mb-10">
+                        Kami hadir untuk merevolusi cara Departemen General Affairs (GA) mengelola transportasi internal perusahaan. Aplikasi ini dirancang dengan fokus pada kemudahan penggunaan, efisiensi, dan visibilitas. Dengan fitur-fitur canggih, Anda dapat mengoptimalkan alokasi kendaraan, meminimalkan waktu tunggu, dan mendapatkan data perjalanan yang akurat untuk pengambilan keputusan yang lebih baik.
                     </p>
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-12">
-                        {[
-                            {
-                                step: 1,
-                                title: 'Ajukan Permintaan Perjalanan',
-                                text: 'Karyawan mengisi formulir dengan tujuan, waktu penjemputan, dan keperluan.',
-                                color: '#a0f0c5',
-                            },
-                            {
-                                step: 2,
-                                title: 'Tinjauan & Penugasan Admin',
-                                text: 'Admin GA menyetujui permintaan dan menugaskan sopir serta kendaraan yang tersedia.',
-                                color: '#85C4F9',
-                            },
-                            {
-                                step: 3,
-                                title: 'Pelaksanaan Perjalanan',
-                                text: 'Sopir yang ditugaskan melaksanakan perjalanan dan memperbarui status di sistem.',
-                                color: '#a0f0c5',
-                            },
-                            {
-                                step: 4,
-                                title: 'Penyelesaian & Pencatatan',
-                                text: 'Perjalanan ditandai selesai dan tercatat di sistem untuk pelacakan dan laporan.',
-                                color: '#85C4F9',
-                            },
-                        ].map(({ step, title, text, color }) => (
-                            <div key={step} className="flex flex-col items-center">
-                                <div className="w-20 h-20 flex items-center justify-center rounded-full text-2xl font-bold border-2 border-black mb-4" style={{ backgroundColor: color }}>
-                                    {step}
-                                </div>
-                                <h4 className="text-xl font-bold mb-2 text-black">{title}</h4>
-                                <p className="text-gray-600 text-center">{text}</p>
-                            </div>
-                        ))}
+                    <p className="text-md md:text-lg text-gray-600">
+                        Misi kami adalah membantu perusahaan Anda bergerak lebih cerdas dan efisien.
+                    </p>
+                </div>
+            </section>
+
+            {/* Services Section */}
+            <section id="service" className="py-24 bg-white h-screen flex items-center justify-center">
+                <div className="container mx-auto px-6 md:px-20 text-center flex flex-col items-center">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-12">Layanan Utama</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-center">
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-blue-200 text-blue-700 font-bold flex items-center justify-center text-2xl mb-4"> <FaCalendarCheck className="text-3xl" /></div>
+                            <h3 className="text-xl font-semibold text-gray-800 mb-2">Permintaan Perjalanan Terstruktur</h3>
+                            <p className="text-gray-600">Karyawan dapat mengajukan permintaan perjalanan dengan detail lengkap, memudahkan perencanaan dan persetujuan.</p>
+                        </div>
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-green-200 text-green-700 font-bold flex items-center justify-center text-2xl mb-4"> <FaCar className="text-3xl" /></div>
+                            <h3 className="text-xl font-semibold text-gray-800 mb-2">Penugasan Sopir Efisien</h3>
+                            <p className="text-gray-600">Admin GA dapat menugaskan sopir dan kendaraan yang sesuai dengan ketersediaan dan kebutuhan perjalanan.</p>
+                        </div>
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-yellow-200 text-yellow-700 font-bold flex items-center justify-center text-2xl mb-4"> <FaClock className="text-3xl" /></div>
+                            <h3 className="text-xl font-semibold text-gray-800 mb-2">Pencatatan Waktu Otomatis</h3>
+                            <p className="text-gray-600">Sistem secara otomatis mencatat waktu keberangkatan dan kedatangan, mengurangi kebutuhan input manual.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Gaya CSS inline */}
-            <style>
-                {`
-          .highlight-blue::before, .highlight-blue-sky::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-            height: 0.6em;
-            z-index: -1;
-            border-radius: 4px;
-          }
-          .highlight-blue::before {
-            background-color: #1E73BE;
-          }
-          .highlight-blue-sky::before {
-            background-color: #85C4F9;
-          }
-          .font-poppins {
-            font-family: 'Poppins', sans-serif;
-          }
-        `}
-            </style>
+            {/* How It Works Section */}
+            <section id="how" className="py-24 bg-white h-screen flex items-center justify-center">
+                <div className="container mx-auto px-6 md:px-20 text-center">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Bagaimana Cara Kerjanya?</h2>
+                    <p className="text-lg text-gray-700 mb-12">
+                        Proses yang sederhana dan intuitif untuk manajemen transportasi yang efektif.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-blue-200 text-blue-700 font-bold flex items-center justify-center text-2xl mb-4">1</div>
+                            <h4 className="text-xl font-semibold text-gray-800 mb-2">Pengajuan Permintaan</h4>
+                            <p className="text-gray-600 text-center">Karyawan mengisi form permintaan perjalanan dengan detail yang diperlukan.</p>
+                        </div>
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-green-200 text-green-700 font-bold flex items-center justify-center text-2xl mb-4">2</div>
+                            <h4 className="text-xl font-semibold text-gray-800 mb-2">Persetujuan & Penugasan</h4>
+                            <p className="text-gray-600 text-center">Admin GA meninjau, menyetujui, dan menugaskan sopir serta kendaraan.</p>
+                        </div>
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-yellow-200 text-yellow-700 font-bold flex items-center justify-center text-2xl mb-4">3</div>
+                            <h4 className="text-xl font-semibold text-gray-800 mb-2">Pelaksanaan Perjalanan</h4>
+                            <p className="text-gray-600 text-center">Sopir melaksanakan perjalanan sesuai jadwal dan dapat memperbarui status.</p>
+                        </div>
+                        <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300">
+                            <div className="w-16 h-16 rounded-full bg-indigo-200 text-indigo-700 font-bold flex items-center justify-center text-2xl mb-4">4</div>
+                            <h4 className="text-xl font-semibold text-gray-800 mb-2">Penyelesaian & Laporan</h4>
+                            <p className="text-gray-600 text-center">Perjalanan selesai tercatat secara otomatis untuk keperluan pelaporan dan analisis.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
         </div>
     );
 }
