@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Import routing machine CSS
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
-import DefaultSidebar from '@/Layouts/sidebarLayout'
-import { Head } from '@inertiajs/react'
+import DefaultSidebar from '@/Layouts/sidebarLayout';
+import { Head } from '@inertiajs/react';
+
+const primaryColor = '#4F46E5'; // Tailwind indigo-600
 
 export default function Book() {
   const [form, setForm] = useState({
@@ -35,7 +38,7 @@ export default function Book() {
 
     setForm(prev => ({ ...prev, time: isoString }));
 
-    // Inisialisasi flatpickr
+    // Initialize flatpickr
     flatpickrInstance.current = flatpickr('#datetime-picker', {
       enableTime: true,
       dateFormat: 'Y-m-d H:i',
@@ -46,14 +49,16 @@ export default function Book() {
       }
     });
 
-    // Inisialisasi Leaflet
+    // Initialize Leaflet
     if (!map) {
       const leafletMap = L.map('map', {
-        center: [51.505, -0.09],
-        zoom: 13,
+        center: [-2.5489, 118.0149], // Example Indonesia coordinates
+        zoom: 5,
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(leafletMap);
       setMap(leafletMap);
     }
 
@@ -66,7 +71,7 @@ export default function Book() {
 
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation not supported');
+      alert('Geolocation not supported by your browser.');
       return;
     }
 
@@ -77,8 +82,8 @@ export default function Book() {
 
         if (pickupMarker) pickupMarker.remove();
 
-        const marker = L.marker([latitude, longitude]).addTo(map);
-        setPickupMarker(marker);
+        const newPickupMarker = L.marker([latitude, longitude]).addTo(map);
+        setPickupMarker(newPickupMarker);
 
         setForm((prev) => ({
           ...prev,
@@ -86,17 +91,16 @@ export default function Book() {
           pickupCoords: { lat: latitude, lon: longitude },
         }));
 
-        map.setView([latitude, longitude], 13);
+        map.setView([latitude, longitude], 15); // Zoom in more on current location
 
         if (form.destinationCoords) {
           calculateDistance(latitude, longitude, form.destinationCoords.lat, form.destinationCoords.lon);
-          // Recalculate route when destination is set
           updateRoute([latitude, longitude], [form.destinationCoords.lat, form.destinationCoords.lon]);
         }
       },
       (err) => {
         console.error(err);
-        alert('Failed to get location');
+        alert('Failed to get your current location.');
       }
     );
   };
@@ -113,37 +117,49 @@ export default function Book() {
     setForm((prev) => ({ ...prev, [name]: value }));
 
     if (name === 'destination') {
-      if (typingTimeout) clearTimeout(typingTimeout);
+      clearTimeout(typingTimeout);
       const timeoutId = setTimeout(() => searchLocation(value, 'destination'), 500);
       setTypingTimeout(timeoutId);
     }
 
     if (name === 'pickup') {
-      if (pickupTypingTimeout) clearTimeout(pickupTypingTimeout);
+      clearTimeout(pickupTypingTimeout);
       const timeoutId = setTimeout(() => searchLocation(value, 'pickup'), 500);
       setPickupTypingTimeout(timeoutId);
     }
   };
 
   const searchLocation = async (query, field) => {
+    if (!query.trim()) {
+      if (field === 'destination') setSuggestions([]);
+      else setPickupSuggestions([]);
+      return;
+    }
+
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
 
-    const res = await fetch(url);
-    const data = await res.json();
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
 
-    const places = data.map((place) => ({
-      name: place.display_name,
-      lat: place.lat,
-      lon: place.lon,
-    }));
+      const places = data.map((place) => ({
+        name: place.display_name,
+        lat: parseFloat(place.lat),
+        lon: parseFloat(place.lon),
+      }));
 
-    if (field === 'destination') setSuggestions(places);
-    else setPickupSuggestions(places);
+      if (field === 'destination') setSuggestions(places);
+      else setPickupSuggestions(places);
+    } catch (error) {
+      console.error("Error fetching location suggestions:", error);
+      if (field === 'destination') setSuggestions([]);
+      else setPickupSuggestions([]);
+    }
   };
 
   const handleSuggestionClick = (place, field) => {
-    const lat = parseFloat(place.lat);
-    const lon = parseFloat(place.lon);
+    const lat = place.lat;
+    const lon = place.lon;
 
     if (field === 'destination') {
       setForm((prev) => ({
@@ -159,16 +175,10 @@ export default function Book() {
 
       if (form.pickupCoords) {
         calculateDistance(form.pickupCoords.lat, form.pickupCoords.lon, lat, lon);
-      }
-
-      // Update route
-      if (pickupMarker) {
         updateRoute(pickupMarker.getLatLng(), newMarker.getLatLng());
-      }
-
-      // Fit map bounds to both markers
-      if (pickupMarker) {
-        map.fitBounds([pickupMarker.getLatLng(), newMarker.getLatLng()]);
+        map.fitBounds([pickupMarker.getLatLng(), newMarker.getLatLng()], { padding: [50, 50] });
+      } else {
+        map.setView([lat, lon], 15);
       }
     } else {
       setForm((prev) => ({
@@ -179,25 +189,17 @@ export default function Book() {
       setPickupSuggestions([]);
 
       if (pickupMarker) pickupMarker.remove();
-      const newMarker = L.marker([lat, lon]).addTo(map);
-      setPickupMarker(newMarker);
+      const newPickupMarker = L.marker([lat, lon]).addTo(map);
+      setPickupMarker(newPickupMarker);
 
       if (form.destinationCoords) {
         calculateDistance(lat, lon, form.destinationCoords.lat, form.destinationCoords.lon);
-      }
-
-      // Update route
-      if (marker) {
-        updateRoute(newMarker.getLatLng(), marker.getLatLng());
-      }
-
-      // Fit map bounds to both markers
-      if (marker) {
-        map.fitBounds([newMarker.getLatLng(), marker.getLatLng()]);
+        updateRoute(newPickupMarker.getLatLng(), marker.getLatLng());
+        map.fitBounds([newPickupMarker.getLatLng(), marker.getLatLng()], { padding: [50, 50] });
+      } else {
+        map.setView([lat, lon], 15);
       }
     }
-
-    map.setView([lat, lon], 13);
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -208,30 +210,32 @@ export default function Book() {
   };
 
   const updateRoute = (pickupLatLon, destinationLatLon) => {
-    // Remove existing route
-    if (routeControl) {
-      routeControl.remove();
+    if (map) {
+      if (routeControl) {
+        map.removeControl(routeControl);
+      }
+
+      const newRouteControl = L.Routing.control({
+        waypoints: [L.latLng(pickupLatLon), L.latLng(destinationLatLon)],
+        lineOptions: {
+          styles: [{ color: primaryColor, opacity: 0.8, weight: 5 }]
+        },
+        createMarker: () => null,
+        routeWhileDragging: true,
+      }).addTo(map);
+
+      setRouteControl(newRouteControl);
     }
-
-    // Create a new route between the markers
-    const route = L.Routing.control({
-      waypoints: [L.latLng(pickupLatLon), L.latLng(destinationLatLon)],
-      createMarker: () => null, // Disable the default markers (no name, just the path)
-      routeWhileDragging: true, // Show the route while dragging
-    }).addTo(map);
-
-    setRouteControl(route); // Save the route control to update or remove later
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Format the time in the correct format for MySQL
     const formattedTime = new Date(form.time).toISOString().slice(0, 19).replace('T', ' ');
 
     const data = {
       ...form,
-      time: formattedTime, // Use the formatted time here
+      time: formattedTime,
     };
 
     try {
@@ -246,7 +250,7 @@ export default function Book() {
       });
 
       if (response.ok) {
-        alert('Ride booked successfully!');
+        alert('Your ride has been booked successfully!');
         setForm({
           name: '',
           pickup: '',
@@ -255,143 +259,169 @@ export default function Book() {
           pickupCoords: null,
           time: '',
         });
+        setDistance(null);
+        if (marker) {
+          map.removeLayer(marker);
+          setMarker(null);
+        }
+        if (pickupMarker) {
+          map.removeLayer(pickupMarker);
+          setPickupMarker(null);
+        }
+        if (routeControl) {
+          map.removeControl(routeControl);
+          setRouteControl(null);
+        }
+        if (map) {
+          map.setView([-2.5489, 118.0149], 5); // Reset map view
+        }
       } else {
         const errorData = await response.json();
-        alert(`Failed to book ride: ${errorData.message}`);
+        alert(`Failed to book ride: ${errorData.message || 'Something went wrong.'}`);
       }
     } catch (error) {
-      alert('An error occurred while booking the ride.');
+      alert('An unexpected error occurred while booking your ride.');
+      console.error("Booking error:", error);
     }
   };
 
-
   return (
     <DefaultSidebar>
-      <Head title='Book a Ride' />
-      <div className="h-screen w-full bg-gray-100 overflow-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="min-h-screen flex flex-col justify-center bg-white p-8 rounded-none shadow-none max-w-none w-full"
-        >
-          <h2 className="text-3xl font-bold text-center mb-6">Book a Ride</h2>
-
-          {/* Name */}
-          <label htmlFor="pickup" className="block font-semibold mb-1">
-              Requester
-            </label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Requester name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="mb-4 w-full border px-4 py-2 rounded"
-          />
-
-          {/* Pickup */}
-          <div className="relative mb-4">
-            <label htmlFor="pickup" className="block font-semibold mb-1">
-              Pickup Location
-            </label>
-            <div className="flex gap-2">
+      <Head title='Pesan Perjalanan Anda' />
+      <div className="w-full min-h-screen bg-white overflow-auto p-6 md:p-10 lg:p-12">
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 text-center mb-4 md:mb-6">
+            Pesan Perjalanan
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nama */}
+            <div>
+              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+                Nama Pemesan
+              </label>
               <input
                 type="text"
-                name="pickup"
-                placeholder="Type pickup location"
-                value={form.pickup}
+                id="name"
+                name="name"
+                placeholder="Nama Anda"
+                value={form.name}
                 onChange={handleChange}
-                autoComplete="off"
-                className="w-full border px-4 py-2 rounded"
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
+            </div>
+
+            {/* Lokasi Jemput */}
+            <div>
+              <label htmlFor="pickup" className="block text-gray-700 text-sm font-bold mb-2">
+                Lokasi Jemput
+              </label>
+              <div className="relative">
+                <div className="flex">
+                  <input
+                    type="text"
+                    id="pickup"
+                    name="pickup"
+                    placeholder="Masukkan lokasi jemput"
+                    value={form.pickup}
+                    onChange={handleChange}
+                    autoComplete="off"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                  <button
+                    type="button"
+                    onClick={useCurrentLocation}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-3 rounded-r focus:outline-none focus:shadow-outline"
+                  >
+                    Gunakan Lokasi Sekarang
+                  </button>
+                </div>
+                {pickupSuggestions.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
+                    {pickupSuggestions.map((s, i) => (
+                      <li
+                        key={i}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                        onClick={() => handleSuggestionClick(s, 'pickup')}
+                      >
+                        {s.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Tujuan */}
+            <div>
+              <label htmlFor="destination" className="block text-gray-700 text-sm font-bold mb-2">
+                Tujuan
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="destination"
+                  name="destination"
+                  placeholder="Masukkan tujuan"
+                  value={form.destination}
+                  onChange={handleChange}
+                  autoComplete="off"
+                  required
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                {suggestions.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
+                    {suggestions.map((s, i) => (
+                      <li
+                        key={i}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                        onClick={() => handleSuggestionClick(s, 'destination')}
+                      >
+                        {s.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Pemilih Tanggal & Waktu */}
+            <div>
+              <label htmlFor="datetime-picker" className="block text-gray-700 text-sm font-bold mb-2">
+                Tanggal & Waktu
+              </label>
+              <input
+                id="datetime-picker"
+                type="text"
+                placeholder="Pilih Tanggal & Waktu"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            {/* Jarak */}
+            {distance && (
+              <div className="text-gray-700 font-semibold">
+                Estimasi Jarak: <span className="font-bold text-indigo-600">{distance} km</span>
+              </div>
+            )}
+
+            {/* Peta */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Pratinjau Peta
+              </label>
+              <div id="map" className="w-full h-64 rounded border shadow-sm"></div>
+            </div>
+
+            <div className="flex justify-center">
               <button
-                type="button"
-                onClick={useCurrentLocation}
-                className="bg-gray-200 px-4 rounded hover:bg-gray-300"
+                type="submit"
+                className={`bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline`}
               >
-                Use Current
+                Pesan Perjalanan Anda
               </button>
             </div>
-            {pickupSuggestions.length > 0 && (
-              <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
-                {pickupSuggestions.map((s, i) => (
-                  <li
-                    key={i}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleSuggestionClick(s, 'pickup')}
-                  >
-                    {s.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Destination */}
-          <div className="relative mb-4">
-            <label htmlFor="destination" className="block font-semibold mb-1">
-              Destination
-            </label>
-            <input
-              type="text"
-              name="destination"
-              placeholder="Type destination"
-              value={form.destination}
-              onChange={handleChange}
-              autoComplete="off"
-              required
-              className="w-full border px-4 py-2 rounded"
-            />
-            {suggestions.length > 0 && (
-              <ul className="absolute bg-white border w-full shadow z-10 max-h-60 overflow-y-auto rounded mt-1">
-                {suggestions.map((s, i) => (
-                  <li
-                    key={i}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleSuggestionClick(s, 'destination')}
-                  >
-                    {s.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* DateTime Picker */}
-          <div className="mb-4">
-            <label htmlFor="datetime" className="block mb-1 font-semibold">Date & Time</label>
-            <input
-              id="datetime-picker"
-              type="text"
-              placeholder="Select Date & Time"
-              className="px-4 py-2 border rounded w-full"
-            />
-          </div>
-
-          {/* Distance */}
-          {distance && (
-            <div className="mb-4 font-semibold">
-              Estimated Distance: {distance} km
-            </div>
-          )}
-
-          {/* Map */}
-          <div className="mb-6">
-            <label className="block font-semibold mb-1">Map</label>
-            <div id="map" className="w-full h-64 rounded border"></div>
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-            >
-              Book Ride
-            </button>
-          </div>
-        </form>
-      </div>
-
+          </form>
+        </div>
     </DefaultSidebar>
   );
 }
