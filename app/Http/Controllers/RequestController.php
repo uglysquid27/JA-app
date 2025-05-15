@@ -27,7 +27,7 @@ class RequestController extends Controller
 
     public function getTodayRequestCount()
     {
-        $todayCount = RideRequest::whereDate('time', Carbon::today())->count();
+        $todayCount = RideRequest::whereDate('request_time', Carbon::today())->count();
 
         return response()->json(['count' => $todayCount]);  
     }
@@ -38,7 +38,7 @@ class RequestController extends Controller
             'name' => 'required|string|max:255',
             'pickup' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
-            'time' => 'required|date',
+            'request_time' => 'required|date',
             'status' => 'nullable|string|max:50', // Optional, default to 'pending'
         ]);
 
@@ -49,7 +49,7 @@ class RequestController extends Controller
         $rideRequest = RideRequest::create($validated);
 
         // Create a readable log message
-        $logMessage = "{$validated['name']} needs to go to {$validated['destination']} and picked up from {$validated['pickup']} at {$validated['time']}.";
+        $logMessage = "{$validated['name']} needs to go to {$validated['destination']} and picked up from {$validated['pickup']} at {$validated['request_time']}.";
 
         // Log the history of this action
         HistoryLog::create([

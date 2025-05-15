@@ -9,13 +9,11 @@ export default function AssignRequest({ request, drivers }) {
     })
 
     const [successMessage, setSuccessMessage] = useState('')
+
     const handleSubmit = (e) => {
         e.preventDefault();
-    
-        // Create a copy and remove time
-        const { time, ...filteredData } = data;
-    
-        post('/assign-driver', filteredData, {
+        console.log(data); // 👀 log to inspect
+        post('/assign-driver', {
             onSuccess: () => {
                 setSuccessMessage('Driver berhasil ditugaskan.');
             },

@@ -30,99 +30,108 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale'; // Import Indonesian locale
 
 export default function Dashboard() {
-    const [isDark, setIsDark] = useState(() => localStorage.theme === 'dark');
-    const [count, setCount] = useState(0);
-    const [rideRequests, setRideRequests] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [lastPage, setLastPage] = useState(1);
-    const [logs, setLogs] = useState([]);
-    const [drivers, setDrivers] = useState([]);
-    const [statusCounts, setStatusCounts] = useState({
-        available: 0,
-        'On Duty': 0,
-        'Off Day': 0,
-    });
-    const [loadingRequests, setLoadingRequests] = useState(true);
-    const [loadingCount, setLoadingCount] = useState(true);
-    const [loadingLogs, setLoadingLogs] = useState(true);
-    const [loadingDrivers, setLoadingDrivers] = useState(true);
-    const [theme, setTheme] = useState('light'); // State untuk menyimpan tema
-
-
+    const [count, setCount] = useState(0); // Assume you have useState if this is React
+    const [loadingCount, setLoadingCount] = useState(false);
+    const [status, setStatus] = useState('pending'); // Added status state
+      const [isDark, setIsDark] = useState(false); // added for dark mode
+      const [currentPage, setCurrentPage] = useState(1);
+        const [rideRequests, setRideRequests] = useState([]);
+      const [lastPage, setLastPage] = useState(1);
+      const [loadingRequests, setLoadingRequests] = useState(false);
+          const [logs, setLogs] = useState([]);
+      const [loadingLogs, setLoadingLogs] = useState(false);
+          const [drivers, setDrivers] = useState([]);
+      const [statusCounts, setStatusCounts] = useState({ available: 0, 'On Duty': 0, 'Off Day': 0 });
+      const [loadingDrivers, setLoadingDrivers] = useState(false);
+  
+  
     useEffect(() => {
-        const root = window.document.documentElement;
-        if (isDark) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-        const fetchRequests = async (page = 1) => {
-            setLoadingRequests(true);
-            try {
-                const response = await fetch(`/requests?page=${page}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setRideRequests(data.data);
-                    setCurrentPage(data.current_page);
-                    setLastPage(data.last_page);
-                } else {
-                    console.error('Failed to fetch ride requests');
-                    // Optionally set an error state here
-                }
-            } catch (error) {
-                console.error('Error fetching ride requests:', error);
-                // Optionally set an error state here
-            } finally {
-                setLoadingRequests(false);
-            }
-        };
-
-        fetchRequests(currentPage);
-
-        setLoadingCount(true);
-        fetch('http://localhost:8000/request/today-count')
-            .then(response => response.ok ? response.json() : Promise.reject('Network error'))
-            .then(data => setCount(data.count))
-            .catch(error => console.error('Fetch error:', error))
-            .finally(() => setLoadingCount(false));
-
-        setLoadingLogs(true);
-        axios.get('/history-logs')
-            .then((response) => {
-                const logsData = response.data.map((log) => {
-                    const parsedData = JSON.parse(log.data);
-                    const logMsg = parsedData.log_message;
-                    const match = logMsg.match(/^(.+?) needs to go to (.+?) and picked up from (.+?) at (.+?)\./);
-                    return {
-                        name: match?.[1] || 'Unknown',
-                        action: log.action,
-                        destination: match?.[2] || 'Unknown',
-                        pickup: match?.[3] || 'Unknown',
-                        time: match?.[4] || 'Unknown'
-                    };
-                });
-                setLogs(logsData);
-            })
-            .catch(error => console.error('Error fetching logs:', error))
-            .finally(() => setLoadingLogs(false));
-
-        setLoadingDrivers(true);
-        axios.get('/drivers')
-            .then(res => {
-                const counts = res.data.reduce((acc, driver) => {
-                    const status = driver.status;
-                    acc[status] = (acc[status] || 0) + 1;
-                    return acc;
-                }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
-                setDrivers(res.data);
-                setStatusCounts(counts);
-            })
-            .catch(err => console.error('Error fetching drivers:', err))
-            .finally(() => setLoadingDrivers(false));
-
-    }, [currentPage, isDark]);
+          const root = window.document.documentElement;
+          if (isDark) {
+              root.classList.add('dark');
+              localStorage.setItem('theme', 'dark');
+          } else {
+              root.classList.remove('dark');
+              localStorage.setItem('theme', 'light');
+          }
+          const fetchRequests = async (page = 1) => {
+              setLoadingRequests(true);
+              try {
+                  const response = await fetch(`/requests?page=${page}`);
+                  if (response.ok) {
+                      const data = await response.json();
+                      setRideRequests(data.data);
+                      setCurrentPage(data.current_page);
+                      setLastPage(data.last_page);
+                  } else {
+                      console.error('Failed to fetch ride requests');
+                      // Optionally set an error state here
+                  }
+              } catch (error) {
+                  console.error('Error fetching ride requests:', error);
+                  // Optionally set an error state here
+              } finally {
+                  setLoadingRequests(false);
+              }
+          };
+  
+          fetchRequests(currentPage);
+  
+          setLoadingCount(true);
+          setStatus('pending');
+          fetch('/request/today-count')
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network error');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  setCount(data.count);
+                  setStatus('success');
+              })
+              .catch(error => {
+                  console.error('Fetch error:', error);
+                  setStatus('error');
+              })
+              .finally(() => setLoadingCount(false));
+  
+          setLoadingLogs(true);
+          axios.get('/history-logs')
+              .then((response) => {
+                  const logsData = response.data.map((log) => {
+                      const parsedData = JSON.parse(log.data);
+                      const logMsg = parsedData.log_message;
+                      const match = logMsg.match(/^(.+?) needs to go to (.+?) and picked up from (.+?) at (.+?)\./);
+                      return {
+                          name: match?.[1] || 'Unknown',
+                          action: log.action,
+                          destination: match?.[2] || 'Unknown',
+                          pickup: match?.[3] || 'Unknown',
+                          time: match?.[4] || 'Unknown'
+                      };
+                  });
+                  setLogs(logsData);
+              })
+              .catch(error => console.error('Error fetching logs:', error))
+              .finally(() => setLoadingLogs(false));
+  
+          setLoadingDrivers(true);
+          axios.get('/drivers')
+              .then(res => {
+                  const counts = res.data.reduce((acc, driver) => {
+                      const status = driver.status;
+                      acc[status] = (acc[status] || 0) + 1;
+                      return acc;
+                  }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
+                  setDrivers(res.data);
+                  setStatusCounts(counts);
+              })
+              .catch(err => console.error('Error fetching drivers:', err))
+              .finally(() => setLoadingDrivers(false));
+  
+      }, [currentPage, isDark]);
+    // Use the status in your rendering logic
 
     const chartData = [
         { name: 'Available', driver: statusCounts['available'] || 0 },
@@ -172,7 +181,7 @@ export default function Dashboard() {
                         },
                         {
                             title: 'Permintaan Tertunda',
-                            value: 5,
+                            value: loadingCount ? <span className="animate-pulse">Memuat...</span> : count,
                             icon: <ClockIcon className='w-6 h-6 text-yellow-500 dark:text-[#A78BFA]' />,
                             color: 'bg-yellow-50 dark:bg-[#282828]',
                             textColor: 'text-yellow-500 dark:text-white',

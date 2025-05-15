@@ -13,7 +13,7 @@ class Request extends Model
         'name',
         'pickup',
         'destination',
-        // 'time',
+        'request_time',
         'status',
         'driver_id',
         'assigned_at',

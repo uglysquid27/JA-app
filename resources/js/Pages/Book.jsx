@@ -18,7 +18,7 @@ export default function Book() {
     destination: '',
     destinationCoords: null,
     pickupCoords: null,
-    time: '',
+    request_time: '',
   });
 
   const [map, setMap] = useState(null);
@@ -37,7 +37,7 @@ export default function Book() {
     const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
     const isoString = wibTime.toISOString().slice(0, 16);
 
-    setForm(prev => ({ ...prev, time: isoString }));
+    setForm(prev => ({ ...prev, request_time: isoString }));
 
     // Initialize flatpickr
     flatpickrInstance.current = flatpickr('#datetime-picker', {
@@ -46,7 +46,7 @@ export default function Book() {
       defaultDate: new Date(),
       onChange: selectedDates => {
         const selectedDate = selectedDates[0];
-        setForm(prev => ({ ...prev, time: selectedDate.toISOString() }));
+        setForm(prev => ({ ...prev, request_time: selectedDate.toISOString() }));
       }
     });
 
@@ -232,11 +232,11 @@ export default function Book() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formattedTime = dayjs(form.time).format('YYYY-MM-DD HH:mm:ss');
+    const formattedTime = dayjs(form.request_time).format('YYYY-MM-DD HH:mm:ss');
 
     const data = {
       ...form,
-      time: formattedTime,
+      request_time: formattedTime,
     };
 
     try {
@@ -258,7 +258,7 @@ export default function Book() {
           destination: '',
           destinationCoords: null,
           pickupCoords: null,
-          time: '',
+          request_time: '',
         });
         setDistance(null);
         if (marker) {

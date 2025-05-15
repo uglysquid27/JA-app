@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('pickup');
             $table->string('destination');
-            $table->timestamp('time');
+            $table->timestamp('request_time')->nullable(); // Make it nullable and let Laravel handle initial insertion
             $table->foreignId('driver_id')->nullable()->nullOnDelete(); // FK to drivers table
             $table->timestamp('assigned_at')->nullable(); // when assigned
             $table->timestamp('accepted_at')->nullable();    // After driver accepts
@@ -24,11 +24,11 @@ return new class extends Migration
             $table->timestamp('arrived_at')->nullable();     // After ride is completed
             $table->timestamp('done_at')->nullable();        // Optional: for when marked as done (synonymous with arrived_at if only one used)
 
-        
+
             $table->string('status')->default('pending');
             $table->timestamps();
         });
-        
+
     }
 
     /**
