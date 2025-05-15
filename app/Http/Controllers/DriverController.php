@@ -61,7 +61,7 @@ class DriverController extends Controller
             $rideRequest->save();
 
             // Update the driver's status to "on duty"
-            $driver->status = 'on duty';
+            $driver->status = 'On Duty';
             $driver->save();
             
             return back()->with('message', 'Request accepted.');
@@ -73,7 +73,7 @@ class DriverController extends Controller
     // Method to mark the ride as done
     public function completeRequest(Request $request)
     {
-        $user = auth()->user();
+        $user = Driver::where('user_id', Auth::id())->first();
         $assignedRequest = RideRequest::where('driver_id', $user->id)
             ->where('status', 'accepted')
             ->first();
@@ -83,6 +83,9 @@ class DriverController extends Controller
             $assignedRequest->status = 'done';
             $assignedRequest->arrived_at = now();
             $assignedRequest->save();
+
+            $user->status = 'available';
+            $user->save();
 
             return redirect()->back()->with('success', 'Ride marked as done.');
         }

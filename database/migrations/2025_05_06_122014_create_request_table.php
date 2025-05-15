@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('pickup');
             $table->string('destination');
             $table->timestamp('time');
-        
             $table->foreignId('driver_id')->nullable()->nullOnDelete(); // FK to drivers table
             $table->timestamp('assigned_at')->nullable(); // when assigned
             $table->timestamp('accepted_at')->nullable();    // After driver accepts
