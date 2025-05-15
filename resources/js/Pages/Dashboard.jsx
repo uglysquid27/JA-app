@@ -266,6 +266,10 @@ export default function Dashboard() {
                                             className='mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1'>
                                             Tugaskan
                                         </button>
+                                    ) : request.status === 'done' ? (
+                                        <span className='inline-block mt-2 bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
+                                            Selesai
+                                        </span>
                                     ) : (
                                         <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md'>
                                             Sudah Ditugaskan
