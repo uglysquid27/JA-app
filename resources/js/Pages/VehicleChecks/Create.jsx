@@ -41,7 +41,7 @@ export default function Create({ vehicles, requests, auth }) {
         <DefaultSidebar user={auth.user}>
         <Head title="Create Vehicle Check" />
     
-        <div className="max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+        <div className="max-w-4xl mx-auto mt-10 bg-white dark:bg-[#282828] p-8 rounded-2xl shadow-md">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 border-b pb-2">📝 Vehicle Pre-Check Form</h1>
             
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">

@@ -289,7 +289,7 @@ export default function Book() {
   return (
     <DefaultSidebar>
       <Head title='Pesan Perjalanan Anda' />
-      <div className="w-full min-h-screen bg-white dark:bg-gray-800 overflow-auto p-6 md:p-10 lg:p-12">
+      <div className="w-full min-h-screen bg-white dark:bg-[#282828] overflow-auto p-6 md:p-10 lg:p-12">
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-4 md:mb-6">
             Pesan Perjalanan
           </h2>
@@ -307,7 +307,7 @@ export default function Book() {
                 value={form.name}
                 onChange={handleChange}
                 required
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-700 dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
 
@@ -326,7 +326,7 @@ export default function Book() {
                     value={form.pickup}
                     onChange={handleChange}
                     autoComplete="off"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-700 dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
                   />
                   <button
                     type="button"
@@ -367,7 +367,7 @@ export default function Book() {
                   onChange={handleChange}
                   autoComplete="off"
                   required
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-700 dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 {suggestions.length > 0 && (
                   <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
@@ -394,7 +394,7 @@ export default function Book() {
                 id="datetime-picker"
                 type="text"
                 placeholder="Pilih Tanggal & Waktu"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-gray-700 dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
 

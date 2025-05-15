@@ -47,6 +47,7 @@ export default function Dashboard() {
     const [loadingDrivers, setLoadingDrivers] = useState(true);
     const [theme, setTheme] = useState('light'); // State untuk menyimpan tema
 
+
     useEffect(() => {
         const root = window.document.documentElement;
         if (isDark) {
@@ -159,35 +160,36 @@ export default function Dashboard() {
                     </button>
                 </div>
 
-                <div id='top card' className='grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8'>
+                <div id='top card' className='grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8 dark:text-white'>
                     {[
                         {
                             title: 'Permintaan Hari Ini',
                             value: loadingCount ? <span className="animate-pulse">Memuat...</span> : count,
-                            icon: <BriefcaseIcon className='w-6 h-6 text-blue-500' />,
-                            color: 'bg-blue-50',
-                            textColor: 'text-blue-500',
+                            icon: <BriefcaseIcon className='w-6 h-6 text-blue-500 dark:text-[#A78BFA]' />,
+                            color: 'bg-blue-50 dark:bg-[#282828]',
+                            textColor: 'text-blue-500 dark:text-white',
                         },
                         {
                             title: 'Permintaan Tertunda',
                             value: 5,
-                            icon: <ClockIcon className='w-6 h-6 text-yellow-500' />,
-                            color: 'bg-yellow-50',
-                            textColor: 'text-yellow-500',
+                            icon: <ClockIcon className='w-6 h-6 text-yellow-500 dark:text-[#A78BFA]' />,
+                            color: 'bg-yellow-50 dark:bg-[#282828]',
+                            textColor: 'text-yellow-500 dark:text-white',
                         },
                         {
                             title: 'Pengemudi Aktif',
                             value: loadingDrivers ? <span className="animate-pulse">Memuat...</span> : statusCounts['On Duty'],
-                            icon: <TruckIcon className='w-6 h-6 text-green-500' />,
-                            color: 'bg-green-50',
-                            textColor: 'text-green-500',
+                            icon: <TruckIcon className='w-6 h-6 text-green-500 dark:text-[#A78BFA]' />,
+                            color: 'bg-green-50 dark:bg-[#282828]',
+                            textColor: 'text-green-500 dark:text-white',
+                            titleColor: 'text-gray-5',
                         },
                         {
                             title: 'Pengemudi Tersedia',
                             value: loadingDrivers ? <span className="animate-pulse">Memuat...</span> : statusCounts['available'],
-                            icon: <UserIcon className='w-6 h-6 text-teal-500' />,
-                            color: 'bg-teal-50',
-                            textColor: 'text-teal-500',
+                            icon: <UserIcon className='w-6 h-6 text-teal-500 dark:text-[#A78BFA]' />,
+                            color: 'bg-teal-50 dark:bg-[#282828]',
+                            textColor: 'text-teal-500 dark:text-white',
                         },
                     ].map((card, i) => (
                         <div
@@ -195,10 +197,10 @@ export default function Dashboard() {
                             className={`${card.color} rounded-lg shadow-md p-5 flex items-center justify-between`}
                         >
                             <div>
-                                <p className='text-sm font-medium text-gray-600'>{card.title}</p>
+                                <p className='text-sm font-medium text-gray-600 dark:text-white'>{card.title}</p>
                                 <p className={`text-2xl font-bold ${card.textColor} mt-1`}>{card.value}</p>
                             </div>
-                            <div className='rounded-full p-3 bg-white shadow'>
+                            <div className='rounded-full p-3 bg-white shadow dark:bg-gray-500'>
                                 {card.icon}
                             </div>
                         </div>
@@ -206,16 +208,28 @@ export default function Dashboard() {
                 </div>
 
 
-                <div id='chart' className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8'>
-                <h3 className='text-lg font-semibold text-gray-800 dark:text-white mb-4'>Status Pengemudi</h3>
+                <div id='chart' className={`bg-white dark:bg-[#282828] rounded-lg shadow-md p-6 mb-8`}>
+                    <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>Status Pengemudi</h3>
                     <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={chartData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray='3 3' stroke='#e0e0e0' />
-                            <XAxis dataKey='name' tick={{ fill: '#6b7280' }} />
-                            <YAxis domain={[0, (dataMax) => (dataMax || 0) + 1]} allowDecimals={false} tick={{ fill: '#6b7280' }} />
-                            <Tooltip itemStyle={{ color: '#374151' }} wrapperStyle={{ backgroundColor: '#f3f4f6', padding: '10px', borderRadius: '5px' }} />
+                            <CartesianGrid strokeDasharray='3 3' stroke={isDark ? '#4A5568' : '#e0e0e0'} />
+                            <XAxis dataKey='name' tick={{ fill: isDark ? '#E2E8F0' : '#6b7280' }} />
+                            <YAxis domain={[0, (dataMax) => (dataMax || 0) + 1]} allowDecimals={false} tick={{ fill: isDark ? '#E2E8F0' : '#6b7280' }} />
+                            <Tooltip
+                                itemStyle={{ color: isDark ? '#E2E8F0' : '#374151' }}
+                                wrapperStyle={{ backgroundColor: isDark ? '#4A5568' : '#f3f4f6', padding: '10px', borderRadius: '5px' }}
+                            />
                             {/* <Legend wrapperStyle={{ top: 0, right: 0, backgroundColor: '#fff', borderRadius: 3, lineHeight: '20px' }} /> */}
-                            <Bar dataKey='driver' fill='#6366F1' activeBar={<Rectangle fill='#a78bfa' stroke='#4f46e5' />} />
+                            <Bar
+                                dataKey='driver'
+                                fill={isDark ? '#A78BFA' : '#6366F1'} // Warna batang untuk dark : light
+                                activeBar={
+                                    <Rectangle
+                                        fill={isDark ? '#C4B5FD' : '#a78bfa'} // Warna active bar untuk dark : light
+                                        stroke={isDark ? '#8B5CF6' : '#4f46e5'} // Warna stroke active bar untuk dark : light
+                                    />
+                                }
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -223,7 +237,7 @@ export default function Dashboard() {
                 <div id='card' className='grid gap-6 grid-cols-1 md:grid-cols-2 mb-8'>
 
                     {/* Request Section */}
-                    <div className='bg-white dark:bg-gray-800  rounded-lg shadow-md p-6'>
+                    <div className='bg-white dark:bg-[#282828]  rounded-lg shadow-md p-6'>
 
                         <div className="flex items-center mb-4">
                             <div className="p-3 bg-blue-100 border border-blue-200 rounded-full mr-3">
@@ -245,7 +259,7 @@ export default function Dashboard() {
                                         <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
                                         <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.time)}
                                     </p>
-                            
+
                                     {request.status === 'pending' ? (
                                         <button
                                             onClick={() => Inertia.visit(`/assign/${request.id}`)}
@@ -265,7 +279,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Driver Section */}
-                    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
+                    <div className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
                         <div className="flex items-center mb-4">
                             <div className="p-3 bg-green-100 border border-green-200 rounded-full mr-3">
                                 <UserIcon className="w-6 h-6 text-green-500" />
@@ -298,7 +312,7 @@ export default function Dashboard() {
                 </div>
 
 
-                <div id='activity' className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
+                <div id='activity' className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
                     <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center'>
                         <EnvelopeIcon className="w-6 h-6 text-gray-500 dark:text-gray-100 mr-2" /> Aktivitas Terakhir
                     </h3>

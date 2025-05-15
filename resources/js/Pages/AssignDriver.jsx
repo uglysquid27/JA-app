@@ -28,9 +28,9 @@ export default function AssignRequest({ request, drivers }) {
         <DefaultSidebar>
             <Head title="Tugaskan Driver" />
             <div className="max-w-4xl mx-auto p-6 mt-8">
-                <h1 className="text-2xl font-bold text-gray-800 mb-6">🚗 Tugaskan Driver</h1>
+                <h1 className="text-2xl font-bold text-gray-800 mb-6 dark:text-white">Tugaskan Driver</h1>
 
-                <div className="bg-white shadow-md rounded-xl p-6 space-y-6 border border-gray-100">
+                <div className="bg-white dark:bg-[#282828] shadow-md rounded-xl p-6 space-y-6 border border-gray-100 dark:border-gray-800">
                     {successMessage && (
                         <div className="p-4 bg-green-100 border border-green-300 text-green-800 rounded">
                             ✅ {successMessage}
@@ -40,56 +40,56 @@ export default function AssignRequest({ request, drivers }) {
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Detail permintaan */}
                         <div className="col-span-2">
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">📝 Detail Permintaan</h2>
+                            <h2 className="text-lg font-semibold text-gray-700 mb-2 dark:text-white">📝 Detail Permintaan</h2>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-600">Nama Pemesan</label>
+                            <label className="block text-sm font-medium text-gray-600 dark:text-white">Nama Pemesan</label>
                             <input
                                 type="text"
                                 value={request.name}
                                 disabled
-                                className="w-full border rounded-lg p-2 bg-gray-100"
+                                className="w-full border rounded-lg p-2 bg-gray-100 dark:bg-[#282828] dark:text-white"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-600">Tujuan</label>
+                            <label className="block text-sm font-medium text-gray-600 dark:text-white">Tujuan</label>
                             <input
                                 type="text"
                                 value={request.destination}
                                 disabled
-                                className="w-full border rounded-lg p-2 bg-gray-100"
+                                className="w-full border rounded-lg p-2 bg-gray-100 dark:bg-[#282828] dark:text-white"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-600">Penjemputan</label>
+                            <label className="block text-sm font-medium text-gray-600 dark:text-white">Penjemputan</label>
                             <input
                                 type="text"
                                 value={request.pickup}
                                 disabled
-                                className="w-full border rounded-lg p-2 bg-gray-100"
+                                className="w-full border rounded-lg p-2 bg-gray-100 dark:bg-[#282828] dark:text-white"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-600">Waktu</label>
+                            <label className="block text-sm font-medium text-gray-600 dark:text-white">Waktu</label>
                             <input
                                 type="text"
                                 value={new Date(request.time).toLocaleString('id-ID')}
                                 disabled
-                                className="w-full border rounded-lg p-2 bg-gray-100"
+                                className="w-full border rounded-lg p-2 bg-gray-100 dark:bg-[#282828] dark:text-white"
                             />
                         </div>
 
                         {/* Pilih driver */}
                         <div className="col-span-2 mt-4">
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">👤 Pilih Driver Tersedia</h2>
+                            <h2 className="text-lg font-semibold text-gray-700 mb-2 dark:text-white">👤 Pilih Driver Tersedia</h2>
                             <select
                                 value={data.driver_id}
                                 onChange={e => setData('driver_id', e.target.value)}
-                                className="w-full border rounded-lg p-2"
+                                className="w-full border border-gray-600 dark:border-white dark:text-white rounded-lg p-2 dark:bg-[#282828]"
                                 required
                             >
                                 <option value="">Pilih driver</option>

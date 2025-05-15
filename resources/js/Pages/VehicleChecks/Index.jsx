@@ -9,7 +9,7 @@ export default function Index() {
     return (
         <DefaultSidebar>
             <Head title="Cek Kendaraan" />
-            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl shadow mt-6">
+            <div className="max-w-5xl mx-auto bg-white dark:bg-[#282828] p-6 rounded-xl shadow mt-6">
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">📋 Daftar Cek Kendaraan</h1>
                 <Link 
                     href="/vehicle-checks/create" 

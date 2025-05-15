@@ -60,7 +60,7 @@ export default function DefaultSidebar({ header, children }) {
 
             {/* Sidebar */}
             <Card
-                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white dark:bg-gray-800 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white dark:bg-[#282828] transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'translate-x-0' : '-translate-x-full'}`}
                 style={{
                     transform: isSidebarOpen || isLargeScreen ? 'translateX(0)' : 'translateX(-100%)',
                 }}
@@ -117,16 +117,6 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Driver</Typography>
                             </ListItem>
                         </Link>
-                        <Link href="#" className="disabled">
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
-                                <ListItemPrefix className="mr-3">
-                                    <div className="bg-orange-50 rounded-md p-2">
-                                        <Cog6ToothIcon className="h-5 w-5 text-orange-500" />
-                                    </div>
-                                </ListItemPrefix>
-                                <Typography color="blue-gray" className="font-medium">Pengaturan</Typography>
-                            </ListItem>
-                        </Link>
                     </List>
                 </div>
                 <div className="p-4 mt-6 border-t border-blue-gray-300">
@@ -149,7 +139,7 @@ export default function DefaultSidebar({ header, children }) {
             </Card>
 
             {/* Konten utama */}
-            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left dark:bg-gray-900 transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
+            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left dark:bg-[#121212] transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
                 <main>{children}</main>
             </div>
         </div>
