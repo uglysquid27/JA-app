@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Driver;
+use App\Models\Rating;
 use App\Models\Request as RideRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -77,19 +78,28 @@ class DriverController extends Controller
         $assignedRequest = RideRequest::where('driver_id', $user->id)
             ->where('status', 'accepted')
             ->first();
-
+    
         if ($assignedRequest) {
-            // Set the ride as done and record the arrival time
+            // Mark as done
             $assignedRequest->status = 'done';
             $assignedRequest->arrived_at = now();
             $assignedRequest->save();
-
+    
+            // Set driver status back to available
             $user->status = 'available';
             $user->save();
-
-            return redirect()->back()->with('success', 'Ride marked as done.');
+    
+            // Create an initial rating record (can be updated later by user)
+            Rating::create([
+                'request_id' => $assignedRequest->id,
+                'driver_id' => $user->id,
+                'rating' => 0, // or null if you want to allow initial blank
+                'comment' => null,
+            ]);
+    
+            return redirect()->back()->with('success', 'Ride marked as done and rating initialized.');
         }
-
+    
         return redirect()->back()->withErrors(['request' => 'No accepted request found.']);
     }
 }

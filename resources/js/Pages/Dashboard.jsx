@@ -23,7 +23,8 @@ import {
     TruckIcon,
     MoonIcon,
     SunIcon,
-    EnvelopeIcon, // Ikon untuk aktivitas terakhir
+    EnvelopeIcon, 
+    StarIcon// Ikon untuk aktivitas terakhir
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale'; // Import Indonesian locale
@@ -253,27 +254,41 @@ export default function Dashboard() {
                             </div>
                         ) : rideRequests.length > 0 ? (
                             rideRequests.map(request => (
-                                <div key={request.id} className='border-b pb-3 mb-3 last:border-b-0'>
-                                    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>{request.name}</h4>
-                                    <p className='text-xs text-gray-500 dark:text-gray-100'>
-                                        <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
-                                        <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.time)}
-                                    </p>
+                                <div key={request.id} className='border-b pb-3 mb-3 last:border-b-0 flex items-start justify-between'>
+                                    <div>
+                                        <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>{request.name}</h4>
+                                        <p className='text-xs text-gray-500 dark:text-gray-100'>
+                                            <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
+                                            <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.time)}
+                                        </p>
 
-                                    {request.status === 'pending' ? (
-                                        <button
-                                            onClick={() => Inertia.visit(`/assign/${request.id}`)}
-                                            className='mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1'>
-                                            Tugaskan
-                                        </button>
-                                    ) : request.status === 'done' ? (
-                                        <span className='inline-block mt-2 bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
-                                            Selesai
-                                        </span>
-                                    ) : (
-                                        <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md'>
-                                            Sudah Ditugaskan
-                                        </span>
+                                        {request.status === 'pending' ? (
+                                            <button
+                                                onClick={() => Inertia.visit(`/assign/${request.id}`)}
+                                                className='mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1'>
+                                                Tugaskan
+                                            </button>
+                                        ) : request.status === 'done' ? (
+                                            <div className="mt-2 space-y-2">
+                                                <span className='block bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
+                                                    Selesai {formatIndonesianDateTime(request.arrived_at)}
+                                                </span>
+                                                {!request.rating && (
+                                                    <button
+                                                        onClick={() => Inertia.visit(`/rating/${request.id}`)}
+                                                        className='bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1'>
+                                                        Beri Rating
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md'>
+                                                Sudah Ditugaskan
+                                            </span>
+                                        )}
+                                    </div>
+                                    {request.status === 'done' && !request.rating && (
+                                        <StarIcon className="w-5 h-5 text-yellow-500 ml-2" />
                                     )}
                                 </div>
                             ))
@@ -281,7 +296,6 @@ export default function Dashboard() {
                             <p className='text-gray-500 text-sm'>Tidak ada permintaan baru.</p>
                         )}
                     </div>
-
                     {/* Driver Section */}
                     <div className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
                         <div className="flex items-center mb-4">

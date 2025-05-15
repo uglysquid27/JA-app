@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\DriverController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\HistoryLogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -58,6 +58,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/driver/complete-request', [DriverController::class, 'completeRequest'])->name('driver.complete');
 
 });
+
+// Menampilkan halaman form rating
+Route::get('/rating/{request}', [RatingController::class, 'create'])->name('rating.create');
+
+// Menyimpan rating setelah submit
+Route::put('/rating/{rating}', [RatingController::class, 'update'])->name('rating.update');
+
 
 // Route::middleware(['auth'])->group(function () {
 //     // Dashboard route, accessible to both admin and driver
