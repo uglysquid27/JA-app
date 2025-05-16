@@ -117,30 +117,30 @@ export default function Dashboard() {
 
         setLoadingDrivers(true);
         axios.get('/drivers')
-  .then(res => {
-    console.log('Raw drivers from API:', res.data);
+            .then(res => {
+                console.log('Raw drivers from API:', res.data);
 
-    // Kalau API kirim 'avg_rating' langsung, pakai ini:
-    const driversWithAvg = res.data.map(driver => ({
-      ...driver,
-      avg_rating: driver.avg_rating !== null ? parseFloat(driver.avg_rating) : null,
-    }));
-    setDrivers(driversWithAvg);
+                // Kalau API kirim 'avg_rating' langsung, pakai ini:
+                const driversWithAvg = res.data.map(driver => ({
+                    ...driver,
+                    avg_rating: driver.avg_rating !== null ? parseFloat(driver.avg_rating) : null,
+                }));
+                setDrivers(driversWithAvg);
 
-    console.log('Processed first driver:', driversWithAvg[0]);
+                console.log('Processed first driver:', driversWithAvg[0]);
 
-    const counts = driversWithAvg.reduce((acc, driver) => {
-      const status = driver.status;
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
+                const counts = driversWithAvg.reduce((acc, driver) => {
+                    const status = driver.status;
+                    acc[status] = (acc[status] || 0) + 1;
+                    return acc;
+                }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
 
-    setStatusCounts(counts);
-  })
-  .catch(err => console.error('Error fetching drivers:', err))
-  .finally(() => setLoadingDrivers(false));
+                setStatusCounts(counts);
+            })
+            .catch(err => console.error('Error fetching drivers:', err))
+            .finally(() => setLoadingDrivers(false));
 
-      
+
 
 
     }, [currentPage, isDark]);
@@ -234,7 +234,7 @@ export default function Dashboard() {
                 </div>
 
 
-                <div id='chart' className={`bg-white dark:bg-[#282828] rounded-lg shadow-md p-6 mb-8`}>
+                <div id='chart' className={`bg-white dark:bg-[#282828] rounded-lg shadow-md p-6 mb-8 sm:p-0`}>
                     <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>Status Pengemudi</h3>
                     <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={chartData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
@@ -347,8 +347,48 @@ export default function Dashboard() {
                                         : driver.status === 'On Duty'
                                             ? 'bg-yellow-500'
                                             : 'bg-red-500';
-
                                 const textColor = 'text-white';
+                                const roundedRating = Math.round(driver.avg_rating);
+
+                                const renderStars = (rating) => {
+                                    const stars = [];
+                                    const fullStars = Math.floor(rating);
+                                    const hasHalfStar = rating - fullStars >= 0.5;
+                                  
+                                    for (let i = 1; i <= 5; i++) {
+                                      if (i <= fullStars) {
+                                        // Full star
+                                        stars.push(
+                                          <svg key={i} className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
+                                          </svg>
+                                        );
+                                      } else if (i === fullStars + 1 && hasHalfStar) {
+                                        // Half star
+                                        stars.push(
+                                          <svg key={i} className="w-4 h-4 text-yellow-500" viewBox="0 0 24 24">
+                                            <defs>
+                                              <linearGradient id={`halfGradient${i}`}>
+                                                <stop offset="50%" stopColor="#FBBF24" />
+                                                <stop offset="50%" stopColor="#D1D5DB" />
+                                              </linearGradient>
+                                            </defs>
+                                            <path fill={`url(#halfGradient${i})`} d="M12 .587l3.668 7.431L24 9.753l-6 5.849L19.335 24 12 19.897 4.665 24 6 15.602 0 9.753l8.332-1.735z" />
+                                          </svg>
+                                        );
+                                      } else {
+                                        // Empty star
+                                        stars.push(
+                                          <svg key={i} className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
+                                          </svg>
+                                        );
+                                      }
+                                    }
+                                  
+                                    return stars;
+                                  };
+                                  
 
                                 return (
                                     <div
@@ -359,13 +399,11 @@ export default function Dashboard() {
                                             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-100">
                                                 {driver.name || 'Pengemudi Tanpa Nama'}
                                             </h4>
-                                            <p className="text-xs text-gray-500 dark:text-gray-300">
-                                                {driver.avg_rating != null
-                                                    ? `Rating rata-rata: ${driver.avg_rating} / 5`
-                                                    : 'Belum ada rating'}
-                                            </p>
-                                        </div>
+                                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-300">
+                                            Rating: {renderStars(driver.avg_rating)} ({driver.avg_rating} dari {driver.rating_count} rating)
 
+                                            </div>
+                                        </div>
                                         <span
                                             className={`${statusColor} ${textColor} text-xs font-medium py-1 px-2 rounded-full`}
                                         >

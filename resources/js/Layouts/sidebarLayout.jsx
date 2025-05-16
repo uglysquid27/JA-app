@@ -15,7 +15,9 @@ import {
     InboxIcon,
     PowerIcon,
     Bars3Icon,
-    XMarkIcon
+    XMarkIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon
 } from "@heroicons/react/24/solid";
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import ApplicationLogo from '@/Components/ApplicationLogo';
@@ -23,17 +25,19 @@ import { Link } from '@inertiajs/react';
 
 export default function DefaultSidebar({ header, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isLargeScreen, setIsLargeScreen] = useState(true); // Asumsi layar besar pada awalnya
+    const [isLargeScreen, setIsLargeScreen] = useState(true);
 
     useEffect(() => {
         const handleResize = () => {
-            setIsLargeScreen(window.innerWidth >= 768); // Anggap 768px sebagai titik perubahan (breakpoint md di Tailwind adalah 768px)
+            setIsLargeScreen(window.innerWidth >= 768);
             if (window.innerWidth < 768) {
-                setIsSidebarOpen(false); // Tutup sidebar pada layar kecil
+                setIsSidebarOpen(false);
+            } else {
+                setIsSidebarOpen(true); // Sidebar selalu terbuka pada layar besar
             }
         };
 
-        handleResize(); // Cek saat pemuatan awal
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -44,37 +48,43 @@ export default function DefaultSidebar({ header, children }) {
 
     return (
         <div className="flex bg-gray-50 dark:dark:bg-gray-900 transition-colors duration-500 ease-in-out ">
-            {/* Tombol Toggle Sidebar (untuk layar kecil) */}
-            {!isLargeScreen && (
+            {/* Tombol Setengah Oval Cantik untuk Membuka Sidebar (Sticky untuk layar kecil) */}
+            {!isLargeScreen && !isSidebarOpen && (
                 <button
                     onClick={toggleSidebar}
-                    className="md:hidden absolute top-4 left-4 z-50 bg-white rounded-md p-2 shadow-md"
+                    className="md:hidden fixed top-1/2 left-0 h-12 w-7 -translate-y-1/2 z-30 bg-gradient-to-r from-white/80 to-gray-100/50 backdrop-blur-sm rounded-r-full shadow-md border-r border-gray-200 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105"
+                    style={{
+                        display: !isLargeScreen ? 'flex' : 'none',
+                    }}
                 >
-                    {isSidebarOpen ? (
-                        <XMarkIcon className="h-6 w-6 text-gray-700" />
-                    ) : (
-                        <Bars3Icon className="h-6 w-6 text-gray-700" />
-                    )}
+                    <ChevronRightIcon className={`h-6 w-6 text-gray-600 transition-transform duration-300 ${isSidebarOpen ? 'rotate-180' : ''}`} />
                 </button>
             )}
 
             {/* Sidebar */}
             <Card
-                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white dark:bg-[#282828] transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed top-0 left-0 h-screen w-full md:max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col justify-between z-40 bg-white dark:bg-[#282828] transition-colors duration-500 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
                 style={{
-                    transform: isSidebarOpen || isLargeScreen ? 'translateX(0)' : 'translateX(-100%)',
+                    transform: isSidebarOpen ? 'translateX(0)' : `translateX(-100%)`,
+                    transition: 'transform 0.3s ease-in-out',
                 }}
             >
+                {isSidebarOpen && !isLargeScreen && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="md:hidden fixed top-1/2 right-0 h-12 w-7 -translate-y-1/2 z-30 bg-gradient-to-l from-white/80 to-gray-100/50 backdrop-blur-sm rounded-l-full shadow-md border-l border-gray-200 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105"
+                        style={{
+                            display: !isLargeScreen ? 'flex' : 'none',
+                        }}
+                    >
+                        <ChevronLeftIcon className={`h-6 w-6 text-gray-600 transition-transform duration-300 ${isSidebarOpen ? '' : '-rotate-180'}`} />
+                    </button>
+                )}
                 <div>
                     <div className="mb-6 p-4 border-b border-blue-gray-300 flex items-center justify-between">
                         <Link href={route('dashboard')} className="flex items-center">
                             <ApplicationLogo className="h-8 w-8 fill-current text-blue-500 mr-2" />
                         </Link>
-                        {!isLargeScreen && (
-                            <button onClick={toggleSidebar} className="md:hidden">
-                                <XMarkIcon className="h-6 w-6 text-gray-700" />
-                            </button>
-                        )}
                     </div>
                     <List className="space-y-3 dark:text-gray-100">
                         <Link href={route('dashboard')}>
@@ -139,7 +149,7 @@ export default function DefaultSidebar({ header, children }) {
             </Card>
 
             {/* Konten utama */}
-            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left dark:bg-[#121212] transition-colors duration-500 ease-in-out ${isSidebarOpen || isLargeScreen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
+            <div className={`flex-1 p-6 overflow-y-auto min-h-screen transition-margin-left dark:bg-[#121212] transition-colors duration-500 ease-in-out ${isSidebarOpen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
                 <main>{children}</main>
             </div>
         </div>

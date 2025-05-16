@@ -18,20 +18,23 @@ class RequestController extends Controller
     }
 
     public function driver()
-    {
-        $drivers = Driver::withAvg('ratings', 'rating')->get()->map(function ($driver) {
+{
+    $drivers = Driver::withAvg('ratings', 'rating')
+        ->withCount('ratings') // hitung jumlah rating
+        ->get()
+        ->map(function ($driver) {
             return [
                 'id' => $driver->id,
                 'name' => $driver->name,
                 'status' => $driver->status,
                 'avg_rating' => $driver->ratings_avg_rating ? round($driver->ratings_avg_rating, 1) : 0,
+                'rating_count' => $driver->ratings_count, // jumlah rating
             ];
         });
-        
 
-        return response()->json($drivers);
+    return response()->json($drivers);
+}
 
-    }
 
     public function getTodayRequestCount()
     {
