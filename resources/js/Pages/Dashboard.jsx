@@ -44,6 +44,19 @@ export default function Dashboard() {
     const [loadingDrivers, setLoadingDrivers] = useState(false);
 
 
+    // Efek untuk mengelola tema gelap/terang
+    useEffect(() => {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'dark') {
+            setIsDark(true);
+            window.document.documentElement.classList.add('dark');
+        } else {
+            setIsDark(false);
+            window.document.documentElement.classList.remove('dark');
+        }
+    }, []); // Hanya dijalankan saat komponen mount untuk inisialisasi dari localStorage
+
+    // Efek untuk menerapkan perubahan tema dan menyimpannya
     useEffect(() => {
         const root = window.document.documentElement;
         if (isDark) {
@@ -53,6 +66,10 @@ export default function Dashboard() {
             root.classList.remove('dark');
             localStorage.setItem('theme', 'light');
         }
+    }, [isDark]); // Dijalankan setiap kali isDark berubah
+
+    // Efek untuk fetching data ride requests
+    useEffect(() => {
         const fetchRequests = async (page = 1) => {
             setLoadingRequests(true);
             try {
@@ -75,7 +92,10 @@ export default function Dashboard() {
         };
 
         fetchRequests(currentPage);
+    }, [currentPage]); // Hanya bergantung pada currentPage
 
+    // Efek untuk fetching count hari ini
+    useEffect(() => {
         setLoadingCount(true);
         setStatus('pending');
         fetch('/request/today-count')
@@ -94,7 +114,10 @@ export default function Dashboard() {
                 setStatus('error');
             })
             .finally(() => setLoadingCount(false));
+    }, []); // Hanya dijalankan saat komponen mount
 
+    // Efek untuk fetching history logs
+    useEffect(() => {
         setLoadingLogs(true);
         axios.get('/history-logs')
             .then((response) => {
@@ -114,38 +137,30 @@ export default function Dashboard() {
             })
             .catch(error => console.error('Error fetching logs:', error))
             .finally(() => setLoadingLogs(false));
+    }, []); // Hanya dijalankan saat komponen mount
 
+    // Efek untuk fetching drivers
+    useEffect(() => {
         setLoadingDrivers(true);
         axios.get('/drivers')
             .then(res => {
                 console.log('Raw drivers from API:', res.data);
-
-                // Kalau API kirim 'avg_rating' langsung, pakai ini:
                 const driversWithAvg = res.data.map(driver => ({
                     ...driver,
                     avg_rating: driver.avg_rating !== null ? parseFloat(driver.avg_rating) : null,
                 }));
                 setDrivers(driversWithAvg);
-
                 console.log('Processed first driver:', driversWithAvg[0]);
-
                 const counts = driversWithAvg.reduce((acc, driver) => {
                     const status = driver.status;
                     acc[status] = (acc[status] || 0) + 1;
                     return acc;
                 }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
-
                 setStatusCounts(counts);
             })
             .catch(err => console.error('Error fetching drivers:', err))
             .finally(() => setLoadingDrivers(false));
-
-
-
-
-    }, [currentPage, isDark]);
-    // Use the status in your rendering logic
-
+    }, []); // Hanya dijalankan saat komponen mount
     const chartData = [
         { name: 'Available', driver: statusCounts['available'] || 0 },
         { name: 'On Duty', driver: statusCounts['On Duty'] || 0 },
