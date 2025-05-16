@@ -8,6 +8,7 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\HistoryLogController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,8 @@ Route::post('/api/requests', [RequestController::class, 'store']);
 Route::get('/request/today-count', [RequestController::class, 'getTodayRequestCount']);
 
 Route::resource('vehicle-checks', \App\Http\Controllers\VehicleCheckController::class);
+
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

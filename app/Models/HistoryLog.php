@@ -18,6 +18,12 @@ class HistoryLog extends Model
         'data',
     ];
 
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+
     protected $casts = [
         'data' => 'array',
         'request_time' => 'datetime',
