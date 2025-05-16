@@ -8,7 +8,6 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
     ResponsiveContainer
 } from 'recharts';
 import { useEffect, useState } from 'react';
@@ -23,114 +22,128 @@ import {
     TruckIcon,
     MoonIcon,
     SunIcon,
-    EnvelopeIcon, 
+    EnvelopeIcon,
     StarIcon// Ikon untuk aktivitas terakhir
 } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale'; // Import Indonesian locale
+import { format, parseISO, isValid } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 export default function Dashboard() {
     const [count, setCount] = useState(0); // Assume you have useState if this is React
     const [loadingCount, setLoadingCount] = useState(false);
     const [status, setStatus] = useState('pending'); // Added status state
-      const [isDark, setIsDark] = useState(false); // added for dark mode
-      const [currentPage, setCurrentPage] = useState(1);
-        const [rideRequests, setRideRequests] = useState([]);
-      const [lastPage, setLastPage] = useState(1);
-      const [loadingRequests, setLoadingRequests] = useState(false);
-          const [logs, setLogs] = useState([]);
-      const [loadingLogs, setLoadingLogs] = useState(false);
-          const [drivers, setDrivers] = useState([]);
-      const [statusCounts, setStatusCounts] = useState({ available: 0, 'On Duty': 0, 'Off Day': 0 });
-      const [loadingDrivers, setLoadingDrivers] = useState(false);
-  
-  
+    const [isDark, setIsDark] = useState(false); // added for dark mode
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rideRequests, setRideRequests] = useState([]);
+    const [lastPage, setLastPage] = useState(1);
+    const [loadingRequests, setLoadingRequests] = useState(false);
+    const [logs, setLogs] = useState([]);
+    const [loadingLogs, setLoadingLogs] = useState(false);
+    const [drivers, setDrivers] = useState([]);
+    const [statusCounts, setStatusCounts] = useState({ available: 0, 'On Duty': 0, 'Off Day': 0 });
+    const [loadingDrivers, setLoadingDrivers] = useState(false);
+
+
     useEffect(() => {
-          const root = window.document.documentElement;
-          if (isDark) {
-              root.classList.add('dark');
-              localStorage.setItem('theme', 'dark');
-          } else {
-              root.classList.remove('dark');
-              localStorage.setItem('theme', 'light');
-          }
-          const fetchRequests = async (page = 1) => {
-              setLoadingRequests(true);
-              try {
-                  const response = await fetch(`/requests?page=${page}`);
-                  if (response.ok) {
-                      const data = await response.json();
-                      setRideRequests(data.data);
-                      setCurrentPage(data.current_page);
-                      setLastPage(data.last_page);
-                  } else {
-                      console.error('Failed to fetch ride requests');
-                      // Optionally set an error state here
-                  }
-              } catch (error) {
-                  console.error('Error fetching ride requests:', error);
-                  // Optionally set an error state here
-              } finally {
-                  setLoadingRequests(false);
-              }
-          };
-  
-          fetchRequests(currentPage);
-  
-          setLoadingCount(true);
-          setStatus('pending');
-          fetch('/request/today-count')
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error('Network error');
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  setCount(data.count);
-                  setStatus('success');
-              })
-              .catch(error => {
-                  console.error('Fetch error:', error);
-                  setStatus('error');
-              })
-              .finally(() => setLoadingCount(false));
-  
-          setLoadingLogs(true);
-          axios.get('/history-logs')
-              .then((response) => {
-                  const logsData = response.data.map((log) => {
-                      const parsedData = JSON.parse(log.data);
-                      const logMsg = parsedData.log_message;
-                      const match = logMsg.match(/^(.+?) needs to go to (.+?) and picked up from (.+?) at (.+?)\./);
-                      return {
-                          name: match?.[1] || 'Unknown',
-                          action: log.action,
-                          destination: match?.[2] || 'Unknown',
-                          pickup: match?.[3] || 'Unknown',
-                          time: match?.[4] || 'Unknown'
-                      };
-                  });
-                  setLogs(logsData);
-              })
-              .catch(error => console.error('Error fetching logs:', error))
-              .finally(() => setLoadingLogs(false));
-  
-          setLoadingDrivers(true);
-          axios.get('/drivers')
-              .then(res => {
-                  const counts = res.data.reduce((acc, driver) => {
-                      const status = driver.status;
-                      acc[status] = (acc[status] || 0) + 1;
-                      return acc;
-                  }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
-                  setDrivers(res.data);
-                  setStatusCounts(counts);
-              })
-              .catch(err => console.error('Error fetching drivers:', err))
-              .finally(() => setLoadingDrivers(false));
-  
-      }, [currentPage, isDark]);
+        const root = window.document.documentElement;
+        if (isDark) {
+            root.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            root.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+        const fetchRequests = async (page = 1) => {
+            setLoadingRequests(true);
+            try {
+                const response = await fetch(`/requests?page=${page}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setRideRequests(data.data);
+                    setCurrentPage(data.current_page);
+                    setLastPage(data.last_page);
+                } else {
+                    console.error('Failed to fetch ride requests');
+                    // Optionally set an error state here
+                }
+            } catch (error) {
+                console.error('Error fetching ride requests:', error);
+                // Optionally set an error state here
+            } finally {
+                setLoadingRequests(false);
+            }
+        };
+
+        fetchRequests(currentPage);
+
+        setLoadingCount(true);
+        setStatus('pending');
+        fetch('/request/today-count')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network error');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setCount(data.count);
+                setStatus('success');
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                setStatus('error');
+            })
+            .finally(() => setLoadingCount(false));
+
+        setLoadingLogs(true);
+        axios.get('/history-logs')
+            .then((response) => {
+                const logsData = response.data.map((log) => {
+                    const parsedData = JSON.parse(log.data);
+                    const logMsg = parsedData.log_message;
+                    const match = logMsg.match(/^(.+?) needs to go to (.+?) and picked up from (.+?) at (.+?)\./);
+                    return {
+                        name: match?.[1] || 'Unknown',
+                        action: log.action,
+                        destination: match?.[2] || 'Unknown',
+                        pickup: match?.[3] || 'Unknown',
+                        time: match?.[4] || 'Unknown'
+                    };
+                });
+                setLogs(logsData);
+            })
+            .catch(error => console.error('Error fetching logs:', error))
+            .finally(() => setLoadingLogs(false));
+
+        setLoadingDrivers(true);
+        axios.get('/drivers')
+  .then(res => {
+    console.log('Raw drivers from API:', res.data);
+
+    // Kalau API kirim 'avg_rating' langsung, pakai ini:
+    const driversWithAvg = res.data.map(driver => ({
+      ...driver,
+      avg_rating: driver.avg_rating !== null ? parseFloat(driver.avg_rating) : null,
+    }));
+    setDrivers(driversWithAvg);
+
+    console.log('Processed first driver:', driversWithAvg[0]);
+
+    const counts = driversWithAvg.reduce((acc, driver) => {
+      const status = driver.status;
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, { available: 0, 'On Duty': 0, 'Off Day': 0 });
+
+    setStatusCounts(counts);
+  })
+  .catch(err => console.error('Error fetching drivers:', err))
+  .finally(() => setLoadingDrivers(false));
+
+      
+
+
+    }, [currentPage, isDark]);
     // Use the status in your rendering logic
 
     const chartData = [
@@ -141,7 +154,10 @@ export default function Dashboard() {
 
     const formatIndonesianDateTime = (dateTimeString) => {
         try {
-            const date = new Date(dateTimeString);
+            const date = parseISO(dateTimeString); // untuk format ISO
+            if (!isValid(date)) {
+                throw new Error('Invalid date');
+            }
             return format(date, "dd MMMM',' HH:mm", { locale: id });
         } catch (error) {
             console.error('Error formatting date:', error);
@@ -268,7 +284,7 @@ export default function Dashboard() {
                                         <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>{request.name}</h4>
                                         <p className='text-xs text-gray-500 dark:text-gray-100'>
                                             <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
-                                            <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.time)}
+                                            <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.request_time)}
                                         </p>
 
                                         {request.status === 'pending' ? (
@@ -278,8 +294,8 @@ export default function Dashboard() {
                                                 Tugaskan
                                             </button>
                                         ) : request.status === 'done' ? (
-                                            <div className="mt-2 space-y-2">
-                                                <span className='block bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
+                                            <div className="mt-2 flex flex-wrap gap-2">
+                                                <span className='bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
                                                     Selesai {formatIndonesianDateTime(request.arrived_at)}
                                                 </span>
                                                 {!request.rating && (
@@ -290,6 +306,7 @@ export default function Dashboard() {
                                                     </button>
                                                 )}
                                             </div>
+
                                         ) : (
                                             <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md'>
                                                 Sudah Ditugaskan
@@ -306,34 +323,59 @@ export default function Dashboard() {
                         )}
                     </div>
                     {/* Driver Section */}
-                    <div className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
+                    <div className="bg-white dark:bg-[#282828] rounded-lg shadow-md p-6">
                         <div className="flex items-center mb-4">
                             <div className="p-3 bg-green-100 border border-green-200 rounded-full mr-3">
                                 <UserIcon className="w-6 h-6 text-green-500" />
                             </div>
-                            <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>Status Pengemudi</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                                Status Pengemudi
+                            </h3>
                         </div>
+
                         {loadingDrivers ? (
                             <div className="animate-pulse">
-                                <div className="h-10 bg-gray-200 rounded mb-2.5"></div>
-                                <div className="h-10 bg-gray-200 rounded mb-2.5"></div>
-                                <div className="h-10 bg-gray-200 rounded"></div>
+                                <div className="h-10 bg-gray-200 rounded mb-2.5" />
+                                <div className="h-10 bg-gray-200 rounded mb-2.5" />
+                                <div className="h-10 bg-gray-200 rounded" />
                             </div>
                         ) : drivers.length > 0 ? (
                             drivers.map((driver, index) => {
-                                const statusColor = driver.status === 'available'
-                                    ? 'bg-green-500' : driver.status === 'On Duty'
-                                        ? 'bg-yellow-500' : 'bg-red-500';
+                                const statusColor =
+                                    driver.status === 'available'
+                                        ? 'bg-green-500'
+                                        : driver.status === 'On Duty'
+                                            ? 'bg-yellow-500'
+                                            : 'bg-red-500';
+
                                 const textColor = 'text-white';
+
                                 return (
-                                    <div key={index} className='flex justify-between items-center border-b pb-3 mb-3 last:border-b-0'>
-                                        <h4 className='text-sm font-medium text-gray-700 dark:text-gray-100'>{driver.name || 'Pengemudi Tanpa Nama'}</h4>
-                                        <span className={`${statusColor} ${textColor} text-xs font-medium py-1 px-2 rounded-full`}>{driver.status}</span>
+                                    <div
+                                        key={driver.id || index}
+                                        className="flex justify-between items-center border-b pb-3 mb-3 last:border-b-0"
+                                    >
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-100">
+                                                {driver.name || 'Pengemudi Tanpa Nama'}
+                                            </h4>
+                                            <p className="text-xs text-gray-500 dark:text-gray-300">
+                                                {driver.avg_rating != null
+                                                    ? `Rating rata-rata: ${driver.avg_rating} / 5`
+                                                    : 'Belum ada rating'}
+                                            </p>
+                                        </div>
+
+                                        <span
+                                            className={`${statusColor} ${textColor} text-xs font-medium py-1 px-2 rounded-full`}
+                                        >
+                                            {driver.status}
+                                        </span>
                                     </div>
                                 );
                             })
                         ) : (
-                            <p className='text-gray-500 text-sm'>Tidak ada data pengemudi.</p>
+                            <p className="text-gray-500 text-sm">Tidak ada data pengemudi.</p>
                         )}
                     </div>
                 </div>

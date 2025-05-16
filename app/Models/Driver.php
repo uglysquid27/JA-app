@@ -33,4 +33,9 @@ class Driver extends Model
     {
         return $this->hasMany(Request::class);
     }
+public function ratings()
+{
+    return $this->hasMany(Rating::class, 'driver_id');
+}
+
 }

@@ -15,6 +15,7 @@ class Rating extends Model
         'rating',
         'comment',
     ];
+    
 
     public function request()
     {

@@ -19,10 +19,18 @@ class RequestController extends Controller
 
     public function driver()
     {
-        // Get all drivers with name and status only
-        $drivers = Driver::select('name', 'status')->get();
+        $drivers = Driver::withAvg('ratings', 'rating')->get()->map(function ($driver) {
+            return [
+                'id' => $driver->id,
+                'name' => $driver->name,
+                'status' => $driver->status,
+                'avg_rating' => $driver->ratings_avg_rating ? round($driver->ratings_avg_rating, 1) : 0,
+            ];
+        });
+        
 
         return response()->json($drivers);
+
     }
 
     public function getTodayRequestCount()
