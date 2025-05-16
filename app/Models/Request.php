@@ -23,7 +23,13 @@ class Request extends Model
     protected $dates = [
         'accepted_at', // So it's automatically cast as a Carbon date
     ];
-
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    
     /**
      * Get the driver assigned to the request.
      */

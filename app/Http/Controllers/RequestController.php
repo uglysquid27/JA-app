@@ -43,37 +43,44 @@ class RequestController extends Controller
         return response()->json(['count' => $todayCount]);  
     }
     public function store(Request $request)
-    {
-        // Validate the incoming request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'pickup' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'request_time' => 'required|date',
-            'status' => 'nullable|string|max:50', // Optional, default to 'pending'
-        ]);
+{
+    // Validasi input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'pickup' => 'required|string|max:255',
+        'destination' => 'required|string|max:255',
+        'request_time' => 'required|date',
+        'status' => 'nullable|string|max:50',
+    ]);
 
-        // Set default status if not provided
-        $validated['status'] = $validated['status'] ?? 'pending'; // Default status
+    $validated['status'] = $validated['status'] ?? 'pending';
 
-        // Create the ride request
+    try {
+        // Simpan ride request
         $rideRequest = RideRequest::create($validated);
 
-        // Create a readable log message
-        $logMessage = "{$validated['name']} needs to go to {$validated['destination']} and picked up from {$validated['pickup']} at {$validated['request_time']}.";
+        // Ambil nama requester
+        $requesterName = $validated['name'];
 
-        // Log the history of this action
+        // Simpan ke HistoryLog (dengan kolom terpisah, bukan JSON)
         HistoryLog::create([
-            'user_id' => auth()->id(),  // Assuming you are using Laravel's built-in authentication
+            'user_id' => auth()->id(),
             'action' => 'ride_request_created',
-            'data' => json_encode([
-                'ride_request_id' => $rideRequest->id,
-                'log_message' => $logMessage
-            ])
+            'ride_request_id' => $rideRequest->id,
+            'requester_name' => $requesterName,
+            'driver_name' => null, // Belum ada driver saat request dibuat
+            'pickup' => $validated['pickup'],
+            'destination' => $validated['destination'],
+            'request_time' => $validated['request_time'],
         ]);
 
         return response()->json(['message' => 'Request saved successfully'], 201);
+
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Gagal menyimpan permintaan'], 500);
     }
+}
+
     public function assignForm($id)
 {
     $request = RideRequest::findOrFail($id);

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Driver;
 use App\Models\Rating;
 use App\Models\Request as RideRequest;
+use App\Models\HistoryLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -51,25 +52,46 @@ class DriverController extends Controller
     public function acceptRequest(Request $request)
     {
         $driver = Driver::where('user_id', Auth::id())->first();
-
-        $rideRequest = RideRequest::where('driver_id', $driver->id)
-                                  ->where('status', 'assigned')
-                                  ->first();
-
-        if ($rideRequest) {
-            $rideRequest->status = 'accepted';
-            $rideRequest->accepted_at = now(); // Set accepted_at timestamp
-            $rideRequest->save();
-
-            // Update the driver's status to "on duty"
-            $driver->status = 'On Duty';
-            $driver->save();
-            
-            return back()->with('message', 'Request accepted.');
+    
+        if (!$driver) {
+            return back()->withErrors(['driver' => 'Driver not found for the current user.']);
         }
-
-        return back()->withErrors(['request' => 'No assigned request found.']);
+    
+        $rideRequest = RideRequest::where('driver_id', $driver->id)
+            ->where('status', 'assigned')
+            ->first();
+    
+        if (!$rideRequest) {
+            return back()->withErrors(['request' => 'No assigned request found.']);
+        }
+    
+        // Update status request dan driver
+        $rideRequest->status = 'accepted';
+        $rideRequest->accepted_at = now();
+        $rideRequest->save();
+    
+        $driver->status = 'On Duty';
+        $driver->save();
+    
+        // Ambil nama requester dan driver
+        $requesterName = $rideRequest->name;
+        $driverName = Auth::user()->name ?? 'Unknown';
+    
+        // Simpan ke history log dengan struktur kolom terpisah
+        HistoryLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'ride_request_accepted',
+            'ride_request_id' => $rideRequest->id,
+            'requester_name' => $requesterName,
+            'driver_name' => $driverName,
+            'pickup' => $rideRequest->pickup,
+            'destination' => $rideRequest->destination,
+            'request_time' => $rideRequest->request_time,
+        ]);
+    
+        return back()->with('message', 'Request accepted.');
     }
+    
 
     // Method to mark the ride as done
     public function completeRequest(Request $request)

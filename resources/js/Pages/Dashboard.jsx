@@ -120,23 +120,23 @@ export default function Dashboard() {
     useEffect(() => {
         setLoadingLogs(true);
         axios.get('/history-logs')
-            .then((response) => {
-                const logsData = response.data.map((log) => {
-                    const parsedData = JSON.parse(log.data);
-                    const logMsg = parsedData.log_message;
-                    const match = logMsg.match(/^(.+?) needs to go to (.+?) and picked up from (.+?) at (.+?)\./);
-                    return {
-                        name: match?.[1] || 'Unknown',
-                        action: log.action,
-                        destination: match?.[2] || 'Unknown',
-                        pickup: match?.[3] || 'Unknown',
-                        time: match?.[4] || 'Unknown'
-                    };
-                });
-                setLogs(logsData);
-            })
-            .catch(error => console.error('Error fetching logs:', error))
-            .finally(() => setLoadingLogs(false));
+    .then((response) => {
+        const logsData = response.data.map((log) => {
+            return {
+                name: log.requester_name || log.driver_name || 'Unknown',
+                action: log.action.replaceAll('_', ' '), // supaya lebih readable
+                destination: log.destination || 'Unknown',
+                pickup: log.pickup || 'Unknown',
+                time: log.request_time || 'Unknown',
+            };
+        });
+
+        setLogs(logsData);
+    })
+    .catch(error => console.error('Error fetching logs:', error))
+    .finally(() => setLoadingLogs(false));
+
+    
     }, []); // Hanya dijalankan saat komponen mount
 
     // Efek untuk fetching drivers
@@ -187,7 +187,7 @@ export default function Dashboard() {
                 <div className='mb-6 flex justify-between items-center'>
                     <div>
                         <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Dashboard</h2>
-                        <p className='text-gray-500'>Pantau aktivitas dan status layanan Anda.</p>
+                        <p className='text-gray-500 dark:text-gray-200'>Pantau aktivitas dan status layanan Anda.</p>
                     </div>
                     <button
                         onClick={() => setIsDark(!isDark)}
@@ -238,7 +238,7 @@ export default function Dashboard() {
                             className={`${card.color} rounded-lg shadow-md p-5 flex items-center justify-between`}
                         >
                             <div>
-                                <p className='text-sm font-medium text-gray-600 dark:text-white'>{card.title}</p>
+                                <p className='text-sm font-medium text-gray-600 dark:text-gray-300'>{card.title}</p>
                                 <p className={`text-2xl font-bold ${card.textColor} mt-1`}>{card.value}</p>
                             </div>
                             <div className='rounded-full p-3 bg-white shadow dark:bg-gray-500'>
@@ -278,70 +278,75 @@ export default function Dashboard() {
                 <div id='card' className='grid gap-6 grid-cols-1 md:grid-cols-2 mb-8'>
 
                     {/* Request Section */}
-                    <div className='bg-white dark:bg-[#282828]  rounded-lg shadow-md p-6'>
-
+                    <div className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
                         <div className="flex items-center mb-4">
-                            <div className="p-3 bg-blue-100 border border-blue-200 rounded-full mr-3">
-                                <ArrowsRightLeftIcon className="w-6 h-6 text-blue-500" />
+                            <div className="p-3 bg-blue-100 border border-blue-200 rounded-full mr-3 dark:bg-blue-900 dark:border-blue-800">
+                                <ArrowsRightLeftIcon className="w-6 h-6 text-blue-500 dark:text-blue-400" />
                             </div>
                             <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>Permintaan Terbaru</h3>
                         </div>
+
                         {loadingRequests ? (
                             <div className="animate-pulse">
-                                <div className="h-10 bg-gray-200 rounded mb-2.5"></div>
-                                <div className="h-10 bg-gray-200 rounded mb-2.5"></div>
-                                <div className="h-10 bg-gray-200 rounded"></div>
+                                <div className="h-10 bg-gray-200 rounded mb-2.5 dark:bg-gray-700"></div>
+                                <div className="h-10 bg-gray-200 rounded mb-2.5 dark:bg-gray-700"></div>
+                                <div className="h-10 bg-gray-200 rounded dark:bg-gray-700"></div>
                             </div>
                         ) : rideRequests.length > 0 ? (
-                            rideRequests.map(request => (
-                                <div key={request.id} className='border-b pb-3 mb-3 last:border-b-0 flex items-start justify-between'>
-                                    <div>
-                                        <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>{request.name}</h4>
-                                        <p className='text-xs text-gray-500 dark:text-gray-100'>
-                                            <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
-                                            <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.request_time)}
-                                        </p>
+                            rideRequests
+                                .slice() // clone array to avoid mutating original state
+                                .sort((a, b) => new Date(b.request_time) - new Date(a.request_time)) // sort descending by request_time
+                                .map(request => (
+                                    <div key={request.id} className='border-b pb-3 mb-3 last:border-b-0 flex items-start justify-between'>
+                                        <div>
+                                            <h4 className='text-sm font-medium text-gray-700 dark:text-white'>{request.name}</h4>
+                                            <p className='text-xs text-gray-500 dark:text-gray-300'>
+                                                <MapPinIcon className="w-4 h-4 inline mr-1" /> {request.destination} |
+                                                <ClockIcon className="w-4 h-4 inline ml-2 mr-1" /> {formatIndonesianDateTime(request.request_time)}
+                                            </p>
 
-                                        {request.status === 'pending' ? (
-                                            <button
-                                                onClick={() => Inertia.visit(`/assign/${request.id}`)}
-                                                className='mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1'>
-                                                Tugaskan
-                                            </button>
-                                        ) : request.status === 'done' ? (
-                                            <div className="mt-2 flex flex-wrap gap-2">
-                                                <span className='bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md'>
-                                                    Selesai {formatIndonesianDateTime(request.arrived_at)}
+                                            {request.status === 'pending' ? (
+                                                <button
+                                                    onClick={() => Inertia.visit(`/assign/${request.id}`)}
+                                                    className='mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400'
+                                                >
+                                                    Tugaskan
+                                                </button>
+                                            ) : request.status === 'done' ? (
+                                                <div className="mt-2 flex flex-wrap gap-2">
+                                                    <span className='bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded-md dark:bg-gray-700 dark:text-gray-300'>
+                                                        Selesai {formatIndonesianDateTime(request.arrived_at)}
+                                                    </span>
+                                                    {!request.rating && (
+                                                        <button
+                                                            onClick={() => Inertia.visit(`/rating/${request.id}`)}
+                                                            className='bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-400'
+                                                        >
+                                                            Beri Rating
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md dark:bg-green-700 dark:text-white'>
+                                                    Sudah Ditugaskan
                                                 </span>
-                                                {!request.rating && (
-                                                    <button
-                                                        onClick={() => Inertia.visit(`/rating/${request.id}`)}
-                                                        className='bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1'>
-                                                        Beri Rating
-                                                    </button>
-                                                )}
-                                            </div>
-
-                                        ) : (
-                                            <span className='inline-block mt-2 bg-green-100 text-green-700 text-xs font-medium py-2 px-3 rounded-md'>
-                                                Sudah Ditugaskan
-                                            </span>
+                                            )}
+                                        </div>
+                                        {request.status === 'done' && !request.rating && (
+                                            <StarIcon className="w-5 h-5 text-yellow-500 ml-2" />
                                         )}
                                     </div>
-                                    {request.status === 'done' && !request.rating && (
-                                        <StarIcon className="w-5 h-5 text-yellow-500 ml-2" />
-                                    )}
-                                </div>
-                            ))
+                                ))
                         ) : (
-                            <p className='text-gray-500 text-sm'>Tidak ada permintaan baru.</p>
+                            <p className='text-gray-500 text-sm dark:text-gray-400'>Tidak ada permintaan baru.</p>
                         )}
                     </div>
+
                     {/* Driver Section */}
                     <div className="bg-white dark:bg-[#282828] rounded-lg shadow-md p-6">
                         <div className="flex items-center mb-4">
-                            <div className="p-3 bg-green-100 border border-green-200 rounded-full mr-3">
-                                <UserIcon className="w-6 h-6 text-green-500" />
+                            <div className="p-3 bg-green-100 border border-green-200 rounded-full mr-3 dark:bg-green-900 dark:border-green-800">
+                                <UserIcon className="w-6 h-6 text-green-500 dark:text-green-400" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                                 Status Pengemudi
@@ -350,9 +355,9 @@ export default function Dashboard() {
 
                         {loadingDrivers ? (
                             <div className="animate-pulse">
-                                <div className="h-10 bg-gray-200 rounded mb-2.5" />
-                                <div className="h-10 bg-gray-200 rounded mb-2.5" />
-                                <div className="h-10 bg-gray-200 rounded" />
+                                <div className="h-10 bg-gray-200 rounded mb-2.5 dark:bg-gray-700" />
+                                <div className="h-10 bg-gray-200 rounded mb-2.5 dark:bg-gray-700" />
+                                <div className="h-10 bg-gray-200 rounded dark:bg-gray-700" />
                             </div>
                         ) : drivers.length > 0 ? (
                             drivers.map((driver, index) => {
@@ -363,47 +368,45 @@ export default function Dashboard() {
                                             ? 'bg-yellow-500'
                                             : 'bg-red-500';
                                 const textColor = 'text-white';
-                                const roundedRating = Math.round(driver.avg_rating);
 
                                 const renderStars = (rating) => {
                                     const stars = [];
                                     const fullStars = Math.floor(rating);
                                     const hasHalfStar = rating - fullStars >= 0.5;
-                                  
+
                                     for (let i = 1; i <= 5; i++) {
-                                      if (i <= fullStars) {
-                                        // Full star
-                                        stars.push(
-                                          <svg key={i} className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
-                                          </svg>
-                                        );
-                                      } else if (i === fullStars + 1 && hasHalfStar) {
-                                        // Half star
-                                        stars.push(
-                                          <svg key={i} className="w-4 h-4 text-yellow-500" viewBox="0 0 24 24">
-                                            <defs>
-                                              <linearGradient id={`halfGradient${i}`}>
-                                                <stop offset="50%" stopColor="#FBBF24" />
-                                                <stop offset="50%" stopColor="#D1D5DB" />
-                                              </linearGradient>
-                                            </defs>
-                                            <path fill={`url(#halfGradient${i})`} d="M12 .587l3.668 7.431L24 9.753l-6 5.849L19.335 24 12 19.897 4.665 24 6 15.602 0 9.753l8.332-1.735z" />
-                                          </svg>
-                                        );
-                                      } else {
-                                        // Empty star
-                                        stars.push(
-                                          <svg key={i} className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
-                                          </svg>
-                                        );
-                                      }
+                                        if (i <= fullStars) {
+                                            // Full star
+                                            stars.push(
+                                                <svg key={i} className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
+                                                </svg>
+                                            );
+                                        } else if (i === fullStars + 1 && hasHalfStar) {
+                                            // Half star
+                                            stars.push(
+                                                <svg key={i} className="w-4 h-4 text-yellow-500" viewBox="0 0 24 24">
+                                                    <defs>
+                                                        <linearGradient id={`halfGradient${i}`}>
+                                                            <stop offset="50%" stopColor="#FBBF24" />
+                                                            <stop offset="50%" stopColor="#D1D5DB" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <path fill={`url(#halfGradient${i})`} d="M12 .587l3.668 7.431L24 9.753l-6 5.849L19.335 24 12 19.897 4.665 24 6 15.602 0 9.753l8.332-1.735z" />
+                                                </svg>
+                                            );
+                                        } else {
+                                            // Empty star
+                                            stars.push(
+                                                <svg key={i} className="w-4 h-4 text-gray-300 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.911c.969 0 1.371 1.24.588 1.81l-3.976 2.89 1.518 4.674c.3.921-.755 1.688-1.54 1.118L10 15.347l-3.97 2.746c-.784.57-1.838-.197-1.539-1.118l1.518-4.674-3.976-2.89c-.783-.57-.38-1.81.588-1.81h4.911L9.05 2.927z" />
+                                                </svg>
+                                            );
+                                        }
                                     }
-                                  
+
                                     return stars;
-                                  };
-                                  
+                                };
 
                                 return (
                                     <div
@@ -411,12 +414,11 @@ export default function Dashboard() {
                                         className="flex justify-between items-center border-b pb-3 mb-3 last:border-b-0"
                                     >
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-100">
+                                            <h4 className="text-sm font-medium text-gray-700 dark:text-white">
                                                 {driver.name || 'Pengemudi Tanpa Nama'}
                                             </h4>
                                             <div className="flex items-center text-xs text-gray-500 dark:text-gray-300">
-                                            Rating: {renderStars(driver.avg_rating)} ({driver.avg_rating} dari {driver.rating_count} rating)
-
+                                                Rating: {renderStars(driver.avg_rating)}  ({driver.avg_rating} dari {driver.rating_count} rating)
                                             </div>
                                         </div>
                                         <span
@@ -428,41 +430,62 @@ export default function Dashboard() {
                                 );
                             })
                         ) : (
-                            <p className="text-gray-500 text-sm">Tidak ada data pengemudi.</p>
+                            <p className="text-gray-500 text-sm dark:text-gray-400">Tidak ada data pengemudi.</p>
                         )}
                     </div>
                 </div>
 
-
                 <div id='activity' className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
-                    <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center'>
-                        <EnvelopeIcon className="w-6 h-6 text-gray-500 dark:text-gray-100 mr-2" /> Aktivitas Terakhir
-                    </h3>
-                    {loadingLogs ? (
-                        <div className="animate-pulse">
-                            <div className="h-12 bg-gray-200 rounded mb-2.5"></div>
-                            <div className="h-12 bg-gray-200 rounded mb-2.5"></div>
-                            <div className="h-12 bg-gray-200 rounded"></div>
-                        </div>
-                    ) : logs.length > 0 ? (
-                        logs.map((log, index) => (
-                            <div key={index} className='border-b pb-3 mb-3 last:border-b-0 flex items-center'>
-                                <div className='mr-3'>
-                                    <EnvelopeIcon className="w-5 h-5 text-gray-400" />
-                                </div>
-                                <div>
-                                    <p className='font-medium text-gray-700 dark:text-gray-200'>{log.name}</p>
-                                    <p className='text-sm text-gray-600 dark:text-gray-100'>
-                                        <span className='font-semibold'>{log.action}</span> ke <span className='font-medium'>{log.destination}</span> dari <span className='font-medium'>{log.pickup}</span> pada {log.time}
-                                    </p>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className='text-gray-500 text-sm'>Belum ada aktivitas terbaru.</p>
-                    )}
+    <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center dark:text-white'>
+        <div className="p-2 bg-yellow-100 border border-yellow-200 rounded-full mr-3 dark:bg-yellow-600 dark:border-yellow-800">
+            <EnvelopeIcon className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
+        </div>
+        Aktivitas Terakhir
+    </h3>
+
+    {loadingLogs ? (
+        <div className="animate-pulse">
+            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
+            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
+            <div className="h-10 bg-gray-200 rounded dark:bg-gray-700"></div>
+        </div>
+    ) : logs.length > 0 ? (
+        logs.map((log, index) => (
+            <div key={index} className='border-b pb-3 mb-3 last:border-b-0 flex items-center'>
+                <div className='mr-4 rounded-full bg-gray-100 dark:bg-gray-700 p-2'>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500 dark:text-gray-400">
+                        {log.action.toLowerCase().includes('kirim') && (
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        )}
+                        {log.action.toLowerCase().includes('ubah') && (
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M16.023 9.343l-4 4c-.207.205-.512.342-.83.342h-.718a9 9 0 00-5.52 5.52m8.353-9.343l4-4c.205-.207.342-.512.342-.83V13.5a9 9 0 01-5.52 5.52h-.718c-.318 0-.623-.137-.83-.342l-4-4" />
+                        )}
+                        {!log.action.toLowerCase().includes('kirim') &&
+                            !log.action.toLowerCase().includes('ubah') && (
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                    d="M15.75 17.25L12 21m0 0l-3-3m3 3V3m-9 19.5h18M9 6.75a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3z" />
+                            )}
+                    </svg>
+                </div>
+                <div>
+                    <p className='font-semibold text-gray-700 dark:text-white'>{log.name}</p>
+                    <p className='text-sm text-gray-600 dark:text-gray-300'>
+                        <span className='font-semibold'>{log.action}</span> ke <span className='font-medium'>{log.destination}</span> dari <span className='font-medium'>{log.pickup}</span><br />
+                        <span className='text-xs'>{log.time}</span>
+                    </p>
                 </div>
             </div>
+        ))
+    ) : (
+        <p className='text-gray-500 text-sm dark:text-gray-400'>Belum ada aktivitas terbaru.</p>
+    )}
+</div>
+
+            </div>
         </DefaultSidebar>
+
     );
 }
