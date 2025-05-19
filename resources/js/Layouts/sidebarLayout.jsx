@@ -27,6 +27,24 @@ import { Link } from '@inertiajs/react';
 export default function DefaultSidebar({ header, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isLargeScreen, setIsLargeScreen] = useState(true);
+    const currentUrl = window.location.pathname;
+
+    const getPath = (url) => {
+        try {
+          return new URL(url).pathname;
+        } catch {
+          // if it's already a path like "/dashboard"
+          return url;
+        }
+      };
+      
+      const isActive = (href) => {
+        const hrefPath = getPath(href);
+        return currentUrl === hrefPath || currentUrl.startsWith(hrefPath);
+      };
+      
+
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -89,7 +107,10 @@ export default function DefaultSidebar({ header, children }) {
                     </div>
                     <List className="space-y-3 dark:text-gray-100">
                         <Link href={route('dashboard')}>
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                            <ListItem
+                                className={`rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive(route('dashboard')) ? 'bg-gray-200 font-semibold dark:bg-gray-600' : ''
+                                    }`}
+                            >
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-blue-50 rounded-md p-2">
                                         <PresentationChartBarIcon className="h-5 w-5 text-blue-500" />
@@ -98,8 +119,12 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Dashboard</Typography>
                             </ListItem>
                         </Link>
+
                         <Link href={route('book')}>
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                            <ListItem
+                                className={`rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive(route('book')) ? 'bg-gray-200 font-semibold dark:bg-gray-600' : ''
+                                    }`}
+                            >
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-indigo-50 rounded-md p-2">
                                         <InboxIcon className="h-5 w-5 text-indigo-500" />
@@ -108,8 +133,12 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Pesan Perjalanan</Typography>
                             </ListItem>
                         </Link>
+
                         <Link href={route('vehicle-checks.index')}>
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                            <ListItem
+                                className={`rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive(route('vehicle-checks.index')) ? 'bg-gray-200 font-semibold dark:bg-gray-600' : ''
+                                    }`}
+                            >
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-teal-50 rounded-md p-2">
                                         <ShoppingBagIcon className="h-5 w-5 text-teal-500" />
@@ -118,8 +147,12 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Pengecekan Kendaraan</Typography>
                             </ListItem>
                         </Link>
+
                         <Link href={route('driver.dashboard')}>
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                            <ListItem
+                                className={`rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive(route('driver.dashboard')) ? 'bg-gray-200 font-semibold dark:bg-gray-600' : ''
+                                    }`}
+                            >
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-gray-100 rounded-md p-2">
                                         <UserCircleIcon className="h-5 w-5 text-gray-500" />
@@ -128,8 +161,12 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Driver</Typography>
                             </ListItem>
                         </Link>
+
                         <Link href={route('reports.index')}>
-                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                            <ListItem
+                                className={`rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 ${isActive(route('reports.index')) ? 'bg-gray-200 font-semibold dark:bg-gray-600' : ''
+                                    }`}
+                            >
                                 <ListItemPrefix className="mr-3">
                                     <div className="bg-orange-50 rounded-md p-2">
                                         <ChartPieIcon className="h-5 w-5 text-orange-500" />
@@ -138,8 +175,8 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Reporting</Typography>
                             </ListItem>
                         </Link>
-
                     </List>
+
                 </div>
                 <div className="p-4 mt-6 border-t border-blue-gray-300">
                     <ListItem className="rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
