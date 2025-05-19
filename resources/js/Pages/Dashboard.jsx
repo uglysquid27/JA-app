@@ -10,7 +10,7 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import {
@@ -28,7 +28,28 @@ import {
 import { format, parseISO, isValid } from 'date-fns';
 import { id } from 'date-fns/locale';
 
+
+const Pagination = ({ currentPage, totalPages, onPageChange }) => (
+    <div className="flex justify-end gap-2 mt-4 ">
+        <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 dark:text-white rounded disabled:opacity-50"
+        >
+            Prev
+        </button>
+        <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 dark:text-white rounded disabled:opacity-50"
+        >
+            Next
+        </button>
+    </div>
+);
+
 export default function Dashboard() {
+    const [requests, setRequests] = useState([]);
     const [count, setCount] = useState(0); // Assume you have useState if this is React
     const [loadingCount, setLoadingCount] = useState(false);
     const [status, setStatus] = useState('pending'); // Added status state
@@ -42,6 +63,12 @@ export default function Dashboard() {
     const [drivers, setDrivers] = useState([]);
     const [statusCounts, setStatusCounts] = useState({ available: 0, 'On Duty': 0, 'Off Day': 0 });
     const [loadingDrivers, setLoadingDrivers] = useState(false);
+
+    // Pagination state
+    const itemsPerPage = 5;
+    const [requestsPage, setRequestsPage] = useState(1);
+    const [driversPage, setDriversPage] = useState(1);
+    const [logsPage, setLogsPage] = useState(1);
 
 
     // Efek untuk mengelola tema gelap/terang
@@ -120,23 +147,23 @@ export default function Dashboard() {
     useEffect(() => {
         setLoadingLogs(true);
         axios.get('/history-logs')
-    .then((response) => {
-        const logsData = response.data.map((log) => {
-            return {
-                name: log.requester_name || log.driver_name || 'Unknown',
-                action: log.action.replaceAll('_', ' '), // supaya lebih readable
-                destination: log.destination || 'Unknown',
-                pickup: log.pickup || 'Unknown',
-                time: log.request_time || 'Unknown',
-            };
-        });
+            .then((response) => {
+                const logsData = response.data.map((log) => {
+                    return {
+                        name: log.requester_name || log.driver_name || 'Unknown',
+                        action: log.action.replaceAll('_', ' '), // supaya lebih readable
+                        destination: log.destination || 'Unknown',
+                        pickup: log.pickup || 'Unknown',
+                        time: log.request_time || 'Unknown',
+                    };
+                });
 
-        setLogs(logsData);
-    })
-    .catch(error => console.error('Error fetching logs:', error))
-    .finally(() => setLoadingLogs(false));
+                setLogs(logsData);
+            })
+            .catch(error => console.error('Error fetching logs:', error))
+            .finally(() => setLoadingLogs(false));
 
-    
+
     }, []); // Hanya dijalankan saat komponen mount
 
     // Efek untuk fetching drivers
@@ -179,6 +206,22 @@ export default function Dashboard() {
             return 'Invalid Date';
         }
     };
+
+    const paginatedRequests = useMemo(() => {
+        const start = (requestsPage - 1) * itemsPerPage;
+        return requests.slice(start, start + itemsPerPage);
+    }, [requests, requestsPage]);
+
+    const paginatedDrivers = useMemo(() => {
+        const start = (driversPage - 1) * itemsPerPage;
+        return drivers.slice(start, start + itemsPerPage);
+    }, [drivers, driversPage]);
+
+    const paginatedLogs = useMemo(() => {
+        const start = (logsPage - 1) * itemsPerPage;
+        return logs.slice(start, start + itemsPerPage);
+    }, [logs, logsPage]);
+
 
     return (
         <DefaultSidebar>
@@ -436,53 +479,58 @@ export default function Dashboard() {
                 </div>
 
                 <div id='activity' className='bg-white dark:bg-[#282828] rounded-lg shadow-md p-6'>
-    <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center dark:text-white'>
-        <div className="p-2 bg-yellow-100 border border-yellow-200 rounded-full mr-3 dark:bg-yellow-600 dark:border-yellow-800">
-            <EnvelopeIcon className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
-        </div>
-        Aktivitas Terakhir
-    </h3>
+                    <h3 className='text-lg font-semibold text-gray-800 mb-4 flex items-center dark:text-white'>
+                        <div className="p-2 bg-yellow-100 border border-yellow-200 rounded-full mr-3 dark:bg-yellow-600 dark:border-yellow-800">
+                            <EnvelopeIcon className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
+                        </div>
+                        Aktivitas Terakhir
+                    </h3>
 
-    {loadingLogs ? (
-        <div className="animate-pulse">
-            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
-            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
-            <div className="h-10 bg-gray-200 rounded dark:bg-gray-700"></div>
-        </div>
-    ) : logs.length > 0 ? (
-        logs.map((log, index) => (
-            <div key={index} className='border-b pb-3 mb-3 last:border-b-0 flex items-center'>
-                <div className='mr-4 rounded-full bg-gray-100 dark:bg-gray-700 p-2'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500 dark:text-gray-400">
-                        {log.action.toLowerCase().includes('kirim') && (
-                            <path strokeLinecap="round" strokeLinejoin="round"
-                                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        )}
-                        {log.action.toLowerCase().includes('ubah') && (
-                            <path strokeLinecap="round" strokeLinejoin="round"
-                                d="M16.023 9.343l-4 4c-.207.205-.512.342-.83.342h-.718a9 9 0 00-5.52 5.52m8.353-9.343l4-4c.205-.207.342-.512.342-.83V13.5a9 9 0 01-5.52 5.52h-.718c-.318 0-.623-.137-.83-.342l-4-4" />
-                        )}
-                        {!log.action.toLowerCase().includes('kirim') &&
-                            !log.action.toLowerCase().includes('ubah') && (
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                    d="M15.75 17.25L12 21m0 0l-3-3m3 3V3m-9 19.5h18M9 6.75a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3z" />
-                            )}
-                    </svg>
+                    {loadingLogs ? (
+                        <div className="animate-pulse">
+                            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
+                            <div className="h-10 bg-gray-200 rounded mb-2 dark:bg-gray-700"></div>
+                            <div className="h-10 bg-gray-200 rounded dark:bg-gray-700"></div>
+                        </div>
+                    ) : paginatedLogs.length > 0 ? (
+                        paginatedLogs.map((log, index) => (
+                            <div key={index} className='border-b pb-3 mb-3 last:border-b-0 flex items-center'>
+                                <div className='mr-4 rounded-full bg-gray-100 dark:bg-gray-700 p-2'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500 dark:text-gray-400">
+                                        {log.action.toLowerCase().includes('kirim') && (
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        )}
+                                        {log.action.toLowerCase().includes('ubah') && (
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M16.023 9.343l-4 4c-.207.205-.512.342-.83.342h-.718a9 9 0 00-5.52 5.52m8.353-9.343l4-4c.205-.207.342-.512.342-.83V13.5a9 9 0 01-5.52 5.52h-.718c-.318 0-.623-.137-.83-.342l-4-4" />
+                                        )}
+                                        {!log.action.toLowerCase().includes('kirim') &&
+                                            !log.action.toLowerCase().includes('ubah') && (
+                                                <path strokeLinecap="round" strokeLinejoin="round"
+                                                    d="M15.75 17.25L12 21m0 0l-3-3m3 3V3m-9 19.5h18M9 6.75a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3zm3 0a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3z" />
+                                            )}
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p className='font-semibold text-gray-700 dark:text-white'>{log.name}</p>
+                                    <p className='text-sm text-gray-600 dark:text-gray-300'>
+                                        <span className='font-semibold'>{log.action}</span> ke <span className='font-medium'>{log.destination}</span> dari <span className='font-medium'>{log.pickup}</span><br />
+                                        <span className='text-xs'>{log.time}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className='text-gray-500 text-sm dark:text-gray-400'>Belum ada aktivitas terbaru.</p>
+                    )}
+                     <Pagination
+                                    currentPage={logsPage}
+                                    totalPages={Math.ceil(logs.length / itemsPerPage)}
+                                    onPageChange={setLogsPage}
+                                />
                 </div>
-                <div>
-                    <p className='font-semibold text-gray-700 dark:text-white'>{log.name}</p>
-                    <p className='text-sm text-gray-600 dark:text-gray-300'>
-                        <span className='font-semibold'>{log.action}</span> ke <span className='font-medium'>{log.destination}</span> dari <span className='font-medium'>{log.pickup}</span><br />
-                        <span className='text-xs'>{log.time}</span>
-                    </p>
-                </div>
-            </div>
-        ))
-    ) : (
-        <p className='text-gray-500 text-sm dark:text-gray-400'>Belum ada aktivitas terbaru.</p>
-    )}
-</div>
 
             </div>
         </DefaultSidebar>
