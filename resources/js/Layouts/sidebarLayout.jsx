@@ -178,6 +178,12 @@ export default function DefaultSidebar({ header, children }) {
                     </List>
 
                 </div>
+                <ResponsiveNavLink
+                            method="post"
+                            href={route('logout')}
+                            as="button"
+                            className="font-medium text-red-500"
+                        >
                 <div className="p-4 mt-6 border-t border-blue-gray-300">
                     <ListItem className="rounded-lg hover:bg-red-300 hover:text-red-600 transition-colors duration-200">
                         <ListItemPrefix className="mr-3">
@@ -185,16 +191,12 @@ export default function DefaultSidebar({ header, children }) {
                                 <PowerIcon className="h-5 w-5 text-red-500" />
                             </div>
                         </ListItemPrefix>
-                        <ResponsiveNavLink
-                            method="post"
-                            href={route('logout')}
-                            as="button"
-                            className="font-medium text-red-500"
-                        >
+                    
                             Keluar
-                        </ResponsiveNavLink>
+                       
                     </ListItem>
                 </div>
+                 </ResponsiveNavLink>
             </Card>
 
             {/* Konten utama */}

@@ -318,7 +318,7 @@ export default function Book() {
   return (
     <DefaultSidebar>
       <Head title='Pesan Perjalanan' />
-      <div className='py-6 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
+      <div className='pt-6 px-4 max-w-7xl mx-auto '>
         <div className='mb-6 flex justify-between items-center bg-white dark:bg-[#282828] rounded-lg shadow-md p-4'>
           <div>
             <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Pesan Perjalanan</h2>
@@ -335,7 +335,7 @@ export default function Book() {
             )}
           </button>
         </div>
-        <div className="w-full min-h-screen bg-white dark:bg-[#282828] overflow-auto p-6 md:p-10 lg:p-12">
+        <div className="w-full min-h-screen bg-white dark:bg-[#282828] rounded-lg shadow-md overflow-auto p-6 md:p-10 lg:p-12">
 
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-4 md:mb-6">
             Pesan Perjalanan
@@ -454,7 +454,7 @@ export default function Book() {
 
             {/* Peta */}
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+              <label className="block text-gray-700 dark:text-gray-100 text-sm font-bold">
                 Pratinjau Peta
               </label>
               <div id="map" className="w-full h-64 rounded border shadow-sm z-0"></div>
