@@ -293,7 +293,7 @@ export default function Dashboard() {
 
 
                 <div id='chart' className={`bg-white dark:bg-[#282828] rounded-lg shadow-md p-6 mb-8 sm:p-0`}>
-                    <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4`}>Status Pengemudi</h3>
+                    <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4 p-4`}>Status Pengemudi</h3>
                     <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={chartData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray='3 3' stroke={isDark ? '#4A5568' : '#e0e0e0'} />
@@ -525,11 +525,11 @@ export default function Dashboard() {
                     ) : (
                         <p className='text-gray-500 text-sm dark:text-gray-400'>Belum ada aktivitas terbaru.</p>
                     )}
-                     <Pagination
-                                    currentPage={logsPage}
-                                    totalPages={Math.ceil(logs.length / itemsPerPage)}
-                                    onPageChange={setLogsPage}
-                                />
+                    <Pagination
+                        currentPage={logsPage}
+                        totalPages={Math.ceil(logs.length / itemsPerPage)}
+                        onPageChange={setLogsPage}
+                    />
                 </div>
 
             </div>

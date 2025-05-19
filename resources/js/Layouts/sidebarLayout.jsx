@@ -179,9 +179,9 @@ export default function DefaultSidebar({ header, children }) {
 
                 </div>
                 <div className="p-4 mt-6 border-t border-blue-gray-300">
-                    <ListItem className="rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
+                    <ListItem className="rounded-lg hover:bg-red-300 hover:text-red-600 transition-colors duration-200">
                         <ListItemPrefix className="mr-3">
-                            <div className="bg-red-100 rounded-md p-2">
+                            <div className="rounded-md p-2">
                                 <PowerIcon className="h-5 w-5 text-red-500" />
                             </div>
                         </ListItemPrefix>
