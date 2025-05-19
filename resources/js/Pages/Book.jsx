@@ -319,157 +319,157 @@ export default function Book() {
     <DefaultSidebar>
       <Head title='Pesan Perjalanan' />
       <div className='py-6 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
-      <div className='mb-6 flex justify-between items-center bg-white dark:bg-[#282828] rounded-lg shadow-md p-4'>
-                    <div>
-                        <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Pesan Perjalanan</h2>
-                        <p className='text-gray-500 dark:text-gray-200'>Pesan perjalanan Anda dan pantau statusnya secara real-time.</p>
-                    </div>
-                    <button
-                        onClick={() => setIsDark(!isDark)}
-                        className="rounded-full p-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        {isDark ? (
-                            <SunIcon className="w-6 h-6 text-yellow-400" />
-                        ) : (
-                            <MoonIcon className="w-6 h-6 text-gray-700" />
-                        )}
-                    </button>
-                </div>
-      <div className="w-full min-h-screen bg-white dark:bg-[#282828] overflow-auto p-6 md:p-10 lg:p-12">
- 
-        <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-4 md:mb-6">
-          Pesan Perjalanan
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nama */}
+        <div className='mb-6 flex justify-between items-center bg-white dark:bg-[#282828] rounded-lg shadow-md p-4'>
           <div>
-            <label htmlFor="name" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
-              Nama Pemesan
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Nama Anda"
-              value={form.name}
-              onChange={handleChange}
-              required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Pesan Perjalanan</h2>
+            <p className='text-gray-500 dark:text-gray-200'>Pesan perjalanan Anda dan pantau statusnya secara real-time.</p>
           </div>
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="rounded-full p-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            {isDark ? (
+              <SunIcon className="w-6 h-6 text-yellow-400" />
+            ) : (
+              <MoonIcon className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
+        </div>
+        <div className="w-full min-h-screen bg-white dark:bg-[#282828] overflow-auto p-6 md:p-10 lg:p-12">
 
-          {/* Lokasi Jemput */}
-          <div>
-            <label htmlFor="pickup" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
-              Lokasi Jemput
-            </label>
-            <div className="relative">
-              <div className="flex">
-                <input
-                  type="text"
-                  id="pickup"
-                  name="pickup"
-                  placeholder="Masukkan lokasi jemput"
-                  value={form.pickup}
-                  onChange={handleChange}
-                  autoComplete="off"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                <button
-                  type="button"
-                  onClick={useCurrentLocation}
-                  className="bg-gray-200 dark:bg-gray-500 hover:bg-gray-300 text-gray-700  dark:text-gray-200 font-semibold py-2 px-3 rounded-r focus:outline-none focus:shadow-outline"
-                >
-                  Gunakan Lokasi Sekarang
-                </button>
-              </div>
-              {pickupSuggestions.length > 0 && (
-                <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
-                  {pickupSuggestions.map((s, i) => (
-                    <li
-                      key={i}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
-                      onClick={() => handleSuggestionClick(s, 'pickup')}
-                    >
-                      {s.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* Tujuan */}
-          <div>
-            <label htmlFor="destination" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
-              Tujuan
-            </label>
-            <div className="relative">
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-4 md:mb-6">
+            Pesan Perjalanan
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nama */}
+            <div>
+              <label htmlFor="name" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+                Nama Pemesan
+              </label>
               <input
                 type="text"
-                id="destination"
-                name="destination"
-                placeholder="Masukkan tujuan"
-                value={form.destination}
+                id="name"
+                name="name"
+                placeholder="Nama Anda"
+                value={form.name}
                 onChange={handleChange}
-                autoComplete="off"
                 required
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
               />
-              {suggestions.length > 0 && (
-                <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
-                  {suggestions.map((s, i) => (
-                    <li
-                      key={i}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
-                      onClick={() => handleSuggestionClick(s, 'destination')}
-                    >
-                      {s.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
-          </div>
 
-          {/* Pemilih Tanggal & Waktu */}
-          <div>
-            <label htmlFor="datetime-picker" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
-              Tanggal & Waktu
-            </label>
-            <input
-              id="datetime-picker"
-              type="text"
-              placeholder="Pilih Tanggal & Waktu"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-
-          {/* Jarak */}
-          {distance && (
-            <div className="text-gray-700 font-semibold">
-              Estimasi Jarak: <span className="font-bold text-indigo-600">{distance} km</span>
+            {/* Lokasi Jemput */}
+            <div>
+              <label htmlFor="pickup" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+                Lokasi Jemput
+              </label>
+              <div className="relative">
+                <div className="flex">
+                  <input
+                    type="text"
+                    id="pickup"
+                    name="pickup"
+                    placeholder="Masukkan lokasi jemput"
+                    value={form.pickup}
+                    onChange={handleChange}
+                    autoComplete="off"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                  <button
+                    type="button"
+                    onClick={useCurrentLocation}
+                    className="bg-gray-200 dark:bg-gray-500 hover:bg-gray-300 text-gray-700  dark:text-gray-200 font-semibold py-2 px-3 rounded-r focus:outline-none focus:shadow-outline"
+                  >
+                    Gunakan Lokasi Sekarang
+                  </button>
+                </div>
+                {pickupSuggestions.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
+                    {pickupSuggestions.map((s, i) => (
+                      <li
+                        key={i}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                        onClick={() => handleSuggestionClick(s, 'pickup')}
+                      >
+                        {s.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          )}
 
-          {/* Peta */}
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
-              Pratinjau Peta
-            </label>
-            <div id="map" className="w-full h-64 rounded border shadow-sm"></div>
-          </div>
+            {/* Tujuan */}
+            <div>
+              <label htmlFor="destination" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+                Tujuan
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="destination"
+                  name="destination"
+                  placeholder="Masukkan tujuan"
+                  value={form.destination}
+                  onChange={handleChange}
+                  autoComplete="off"
+                  required
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                {suggestions.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 w-full shadow-md z-10 rounded-b-md mt-1 max-h-48 overflow-y-auto">
+                    {suggestions.map((s, i) => (
+                      <li
+                        key={i}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                        onClick={() => handleSuggestionClick(s, 'destination')}
+                      >
+                        {s.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
 
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className={`bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline`}
-            >
-              Pesan Perjalanan Anda
-            </button>
-          </div>
-        </form>
-      </div>
+            {/* Pemilih Tanggal & Waktu */}
+            <div>
+              <label htmlFor="datetime-picker" className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+                Tanggal & Waktu
+              </label>
+              <input
+                id="datetime-picker"
+                type="text"
+                placeholder="Pilih Tanggal & Waktu"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:bg-[#282828] dark:text-gray-500 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            {/* Jarak */}
+            {distance && (
+              <div className="text-gray-700 font-semibold">
+                Estimasi Jarak: <span className="font-bold text-indigo-600">{distance} km</span>
+              </div>
+            )}
+
+            {/* Peta */}
+            <div className="mb-4">
+              <label className="block text-gray-700 dark:text-gray-100 text-sm font-bold mb-2">
+                Pratinjau Peta
+              </label>
+              <div id="map" className="w-full h-64 rounded border shadow-sm z-0"></div>
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                className={`bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline`}
+              >
+                Pesan Perjalanan Anda
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </DefaultSidebar>
   );
