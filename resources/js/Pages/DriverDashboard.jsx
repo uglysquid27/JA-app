@@ -3,6 +3,11 @@ import DefaultSidebar from '@/Layouts/sidebarLayout';
 import { useState, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { PowerIcon, MapPinIcon, FlagIcon, ClockIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import {
+    MoonIcon,
+    SunIcon,
+} from '@heroicons/react/24/outline';
+
 
 // Komponen Timer untuk menampilkan durasi perjalanan
 function RunningTime({ startTime }) {
@@ -30,6 +35,7 @@ function RunningTime({ startTime }) {
 }
 
 export default function DriverDashboard({ driver, assignedRequest }) {
+    const [isDark, setIsDark] = useState(false); // added for dark mode
     const [loading, setLoading] = useState(false);
     const { post, processing, errors } = useForm({});
 
@@ -44,6 +50,30 @@ export default function DriverDashboard({ driver, assignedRequest }) {
             onError: (error) => console.error("Gagal memperbarui status", error),
         });
     };
+
+
+    useEffect(() => {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'dark') {
+            setIsDark(true);
+            window.document.documentElement.classList.add('dark');
+        } else {
+            setIsDark(false);
+            window.document.documentElement.classList.remove('dark');
+        }
+    }, []); // Hanya dijalankan saat komponen mount untuk inisialisasi dari localStorage
+
+    // Efek untuk menerapkan perubahan tema dan menyimpannya
+    useEffect(() => {
+        const root = window.document.documentElement;
+        if (isDark) {
+            root.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            root.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [isDark]); // Dijalankan setiap kali is
 
 
     const handleAcceptRequest = () => {
@@ -67,16 +97,29 @@ export default function DriverDashboard({ driver, assignedRequest }) {
 
     return (
         <DefaultSidebar>
-            <Head title="Dasbor Pengemudi" />
+            <Head title="Dashboard Pengemudi" />
             <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
                 <div className="bg-white dark:bg-gray-700 shadow overflow-hidden rounded-lg mb-6">
                     <div className="px-4 py-5 sm:px-6">
-                        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                            Selamat datang, <span className="text-blue-600 dark:text-blue-300">{driver.name}</span>
-                        </h1>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-300">
-                            Kelola status dan permintaan perjalanan Anda di sini.
-                        </p>
+                        <div className="flex items-center justify-between">
+                            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                Selamat datang, <span className="text-blue-600 dark:text-blue-300">{driver.name}</span>
+                            </h1>
+                            <button
+                                onClick={() => setIsDark(!isDark)}
+                                className="rounded-full p-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                {isDark ? (
+                                    <SunIcon className="w-6 h-6 text-yellow-400" />
+                                ) : (
+                                    <MoonIcon className="w-6 h-6 text-gray-700" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div className='mb-6 flex justify-between items-center'>
                     </div>
                     <div className="border-t border-gray-200 px-4 py-5 sm:p-6 bg-gray-50 dark:bg-[#282828] sm:flex sm:items-center sm:justify-between">
                         <div className="flex items-center space-x-3">

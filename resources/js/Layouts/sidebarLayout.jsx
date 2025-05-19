@@ -17,7 +17,8 @@ import {
     Bars3Icon,
     XMarkIcon,
     ChevronLeftIcon,
-    ChevronRightIcon
+    ChevronRightIcon,
+    ChartPieIcon
 } from "@heroicons/react/24/solid";
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import ApplicationLogo from '@/Components/ApplicationLogo';
@@ -127,6 +128,17 @@ export default function DefaultSidebar({ header, children }) {
                                 <Typography color="blue-gray" className="font-medium">Driver</Typography>
                             </ListItem>
                         </Link>
+                        <Link href={route('reports.index')}>
+                            <ListItem className="rounded-lg hover:bg-blue-gray-50 transition-colors duration-200">
+                                <ListItemPrefix className="mr-3">
+                                    <div className="bg-orange-50 rounded-md p-2">
+                                        <ChartPieIcon className="h-5 w-5 text-orange-500" />
+                                    </div>
+                                </ListItemPrefix>
+                                <Typography color="blue-gray" className="font-medium">Reporting</Typography>
+                            </ListItem>
+                        </Link>
+
                     </List>
                 </div>
                 <div className="p-4 mt-6 border-t border-blue-gray-300">

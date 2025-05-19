@@ -184,7 +184,7 @@ export default function Dashboard() {
         <DefaultSidebar>
             <Head title='Dashboard' />
             <div className='py-6 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
-                <div className='mb-6 flex justify-between items-center'>
+                <div className='mb-6 flex justify-between items-center bg-white dark:bg-[#282828] rounded-lg shadow-md p-4'>
                     <div>
                         <h2 className='text-xl font-semibold text-gray-800 dark:text-gray-100'>Dashboard</h2>
                         <p className='text-gray-500 dark:text-gray-200'>Pantau aktivitas dan status layanan Anda.</p>
