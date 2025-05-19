@@ -49,6 +49,11 @@ Route::resource('vehicle-checks', \App\Http\Controllers\VehicleCheckController::
 
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
+// These can be used for dynamic fetch
+Route::get('/reports/requests', [ReportController::class, 'getRequests'])->name('reports.requests');
+Route::get('/reports/drivers', [ReportController::class, 'getDrivers'])->name('reports.drivers');
+Route::get('/reports/logs', [ReportController::class, 'getLogs'])->name('reports.logs');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

@@ -2,23 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Request;
+use App\Models\Request as RideRequest;
 use App\Models\Driver;
 use App\Models\HistoryLog;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ReportController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
-        $requests = Request::with(['user', 'driver'])->latest()->get();
-        $drivers = Driver::with('user')->get();
-        $logs = HistoryLog::with('user')->latest()->get();
+        return Inertia::render('Reports/Index');
+    }
 
-        return Inertia::render('Reports/Index', [
-            'requests' => $requests,
-            'drivers' => $drivers,
-            'logs' => $logs,
-        ]);
+    public function getRequests()
+    {
+        $requests = RideRequest::with(['user', 'driver.user'])->latest()->get();
+        return response()->json($requests);
+    }
+
+    public function getDrivers()
+    {
+        $drivers = Driver::with('user')->get();
+        return response()->json($drivers);
+    }
+
+    public function getLogs()
+    {
+        $logs = HistoryLog::with('user')->latest()->get();
+        return response()->json($logs);
     }
 }
