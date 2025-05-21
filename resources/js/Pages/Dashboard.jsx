@@ -435,7 +435,7 @@ export default function Dashboard() {
                                                             <stop offset="50%" stopColor="#D1D5DB" />
                                                         </linearGradient>
                                                     </defs>
-                                                    <path fill={`url(#halfGradient${i})`} d="M12 .587l3.668 7.431L24 9.753l-6 5.849L19.335 24 12 19.897 4.665 24 6 15.602 0 9.753l8.332-1.735z" />
+                                                    <path fill={`url(#halfGradient${i})`} d="M12 .587l3.668 7.431L24 9.753l-6 5.849L19.335 24 12 19.897 4.66s5 24 6 15.602 0 9.753l8.332-1.735z" />
                                                 </svg>
                                             );
                                         } else {
